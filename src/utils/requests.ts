@@ -144,7 +144,7 @@ export const sendRequest = async <T>(
       isSuccess: false,
       statusCode: 0,
       data: {
-        _error: 'Сетевая ошибка',
+        _error: 'Сетевая ошибка запроса',
       },
     }
   }
