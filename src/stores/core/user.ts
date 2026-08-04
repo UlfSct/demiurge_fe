@@ -31,6 +31,14 @@ export type RegisterRequestResponseData = {
   email: string
 }
 
+export type RefreshTokenRequestPayloadData = {
+  refresh: string
+}
+
+export type RefreshTokenRequestResponseData = {
+  access: string
+}
+
 export type ProfileDetailRequestResponseData = {
   id: number
   last_name: string
@@ -48,15 +56,22 @@ type CurrentStoreErrors = {
 
 export const useUserStore = defineStore('user', () => {
   const ACCESS_TOKEN_LS_KEY = 'token'
+  const REFRESH_TOKEN_LS_KEY = 'refresh_token'
 
   const isInitialized = ref<boolean>(false)
 
   const getLocalStorageToken = () => localStorage.getItem(ACCESS_TOKEN_LS_KEY)
   const setLocalStorageToken = (value: string) => localStorage.setItem(ACCESS_TOKEN_LS_KEY, value)
   const removeLocalStorageToken = () => localStorage.removeItem(ACCESS_TOKEN_LS_KEY)
+  const getLocalStorageRefreshToken = () => localStorage.getItem(REFRESH_TOKEN_LS_KEY)
+  const setLocalStorageRefreshToken = (value: string) =>
+    localStorage.setItem(REFRESH_TOKEN_LS_KEY, value)
+  const removeLocalStorageRefreshToken = () => localStorage.removeItem(REFRESH_TOKEN_LS_KEY)
 
   const isAuthenticated = ref<boolean>(false)
   const token = ref<string | null>(getLocalStorageToken() || null)
+  const refreshToken = ref<string | null>(getLocalStorageRefreshToken() || null)
+  const profile = ref<ProfileDetailRequestResponseData | null>(null)
   const getToken = computed(() => token.value)
 
   const setNewToken = (value: string) => {
@@ -64,9 +79,16 @@ export const useUserStore = defineStore('user', () => {
     token.value = value
   }
 
+  const setNewRefreshToken = (value: string) => {
+    setLocalStorageRefreshToken(value)
+    refreshToken.value = value
+  }
+
   const clearTokenData = () => {
+    removeLocalStorageRefreshToken()
     removeLocalStorageToken()
     token.value = null
+    refreshToken.value = null
   }
 
   const logout = () => {
@@ -83,6 +105,10 @@ export const useUserStore = defineStore('user', () => {
     )
 
     if (!response.isSuccess) throw response.data
+
+    setNewRefreshToken(response.data.refresh)
+    setNewToken(response.data.access)
+    // TODO: перенаправление на профиль
   }
 
   const register = async (data: RegisterRequestPayloadData) => {
@@ -91,25 +117,66 @@ export const useUserStore = defineStore('user', () => {
       data,
     )
 
-    console.log(response)
-
     if (!response.isSuccess) throw response.data
+
     await login({
       username: data.username,
       password: data.password,
     })
   }
 
-  const loadProfile = async () => {}
+  const refreshAccessToken = async () => {
+    let response = await sendRequest<RefreshTokenRequestResponseData>(
+      getEndpoint(urls.BASE, ['TOKEN', 'REFRESH']),
+      {
+        refresh: String(refreshToken.value),
+      },
+    )
+
+    if (response.isSuccess) {
+      token.value = response.data.access
+      isAuthenticated.value = true
+      return
+    }
+
+    if (response.statusCode === 401) {
+      // TODO: если на главной - остаться, иначе - на логин
+      return
+    }
+
+    throw new Error('Неизвестная ошибка обновления токена')
+  }
+
+  const loadProfile = async () => {
+    let response = await sendRequest<ProfileDetailRequestResponseData>(
+      getEndpoint(urls.USER, ['PROFILE', 'DETAIL']),
+    )
+
+    if (response.isSuccess) {
+      profile.value = response.data
+      isAuthenticated.value = true
+      return
+    }
+
+    if (response.statusCode === 401) {
+      await refreshAccessToken()
+      return
+    }
+
+    throw new Error('Неизвестная ошибка инициализации')
+  }
+
+  const setupRefreshTokenInterval = () => {}
 
   const initStore = async () => {
-    await sendRequest(getEndpoint(urls.USER, ['PROFILE', 'DETAIL']))
+    await loadProfile()
+    if (isAuthenticated.value) {
+      setupRefreshTokenInterval()
+    }
   }
 
   if (!isInitialized.value) {
-    initStore().then(() => {
-      isInitialized.value = true
-    })
+    initStore().then(() => (isInitialized.value = true))
   }
 
   return {

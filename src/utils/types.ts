@@ -11,25 +11,19 @@ export type RequestErrorObject = {
   [key: string]: RequestErrorEntry | string
 }
 
-interface ISuccessResponse<T> {
+export interface ISuccessResponse<T> {
   isSuccess: true
   statusCode: number
   data: T
-  errors: null
 }
 
-interface ISuccessEmptyResponse {
-  isSuccess: true
-  statusCode: number
-}
-
-interface IErrorResponse {
+export interface IErrorResponse {
   isSuccess: false
   statusCode: number
   data: RequestErrorObject
 }
 
-export type RequestResponse<T> = ISuccessResponse<T> | ISuccessEmptyResponse | IErrorResponse
+export type RequestResponse<T> = ISuccessResponse<T> | IErrorResponse
 
 export interface CookieOptions {
   expires?: Date | number | string

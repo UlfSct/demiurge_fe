@@ -1,5 +1,5 @@
 import { API_URL } from '@/utils/consts.ts'
-import { useUserStore } from '@/stores/user.ts'
+import { useUserStore } from '@/stores/core/user.ts'
 import type {
   RequestErrorObject,
   RequestParams,
@@ -100,7 +100,6 @@ export const sendRequest = async <T>(
   query: RequestQuery = {},
   signal?: AbortSignal,
 ): Promise<RequestResponse<T>> => {
-  console.log(urlEntry)
   const urlString = constructUrlStringWithParams(urlEntry.path, params)
 
   if (!urlString) {
@@ -162,6 +161,7 @@ export const sendRequest = async <T>(
     return {
       isSuccess: true,
       statusCode: response.status,
+      data: {} as T,
     }
   }
 

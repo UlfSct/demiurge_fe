@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import logoImage from '@/assets/logo.jpg'
-import { useUserStore } from '@/stores/user.ts'
+import { useUserStore } from '@/stores/core/user.ts'
 
 const userStore = useUserStore()
 </script>

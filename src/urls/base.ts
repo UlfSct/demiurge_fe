@@ -15,6 +15,7 @@ const baseUrls: UrlGroup = {
     REFRESH: {
       path: '/base/refresh/',
       method: 'POST',
+      isAuthNotRequired: true,
     },
   },
 }
