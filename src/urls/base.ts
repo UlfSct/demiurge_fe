@@ -1,20 +1,18 @@
-import type { UrlGroup } from '@/urls/types'
-
-const baseUrls: UrlGroup = {
+const baseUrls = {
   LOGIN: {
     path: '/base/login/',
-    method: 'POST',
+    method: 'POST' as const,
     isAuthNotRequired: true,
   },
   REGISTER: {
     path: '/base/register/',
-    method: 'POST',
+    method: 'POST' as const,
     isAuthNotRequired: true,
   },
   TOKEN: {
     REFRESH: {
-      path: '/base/refresh/',
-      method: 'POST',
+      path: '/base/token/refresh/',
+      method: 'POST' as const,
       isAuthNotRequired: true,
     },
   },

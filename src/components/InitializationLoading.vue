@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <v-row no-gutters> Главная </v-row>
+  <div>Загрузка...</div>
 </template>
 
 <style scoped></style>

@@ -1,20 +1,18 @@
-import type { UrlGroup } from '@/urls/types'
-
-const userUrls: UrlGroup = {
+const userUrls = {
   PROFILE: {
     DETAIL: {
       path: '/user/user/',
-      method: 'GET',
+      method: 'GET' as const,
     },
     EDIT: {
       path: '/user/user/',
-      method: 'PATCH',
+      method: 'PATCH' as const,
     },
   },
   PASSWORD: {
     CHANGE: {
       path: '/user/user/change/password/',
-      method: 'POST',
+      method: 'POST' as const,
     },
   },
 }

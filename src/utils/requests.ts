@@ -58,7 +58,6 @@ const constructUrlStringWithParams = (path: string, params: RequestParams = {}) 
 
   for (let i = 1; i < parts.length - 1; i++) {
     const part = parts[i]
-    console.log(parts)
     if (!part) {
       console.error('Ошибка подстановки параметров URL: пустая часть пути', path)
       return null

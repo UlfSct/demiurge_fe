@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import logoImage from '@/assets/logo.jpg'
 import { useUserStore } from '@/stores/core/user.ts'
+import routerNames from '@/router/names.ts'
+import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
+const router = useRouter()
+
+const goToLogin = () => {
+  router.push({ name: routerNames.LOGIN })
+}
 </script>
 
 <template>
@@ -23,6 +30,7 @@ const userStore = useUserStore()
         variant="outlined"
         prepend-icon="person"
         color="#d4af37"
+        @click="goToLogin"
       >
         Войти
       </v-btn>

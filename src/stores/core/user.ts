@@ -1,10 +1,8 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { readonly, ref } from 'vue'
 import { sendRequest } from '@/utils/requests.ts'
-import { getEndpoint } from '@/utils/urls.ts'
 import { urls } from '@/urls'
 import type { ISODateString } from '@/types/brands.ts'
-import type { RequestErrorObject } from '@/utils/types.ts'
 
 export type LoginRequestPayloadData = {
   username: string
@@ -48,15 +46,10 @@ export type ProfileDetailRequestResponseData = {
   date_joined: ISODateString
 }
 
-type CurrentStoreErrors = {
-  login: RequestErrorObject
-  register: RequestErrorObject
-  refresh: RequestErrorObject
-}
-
 export const useUserStore = defineStore('user', () => {
   const ACCESS_TOKEN_LS_KEY = 'token'
   const REFRESH_TOKEN_LS_KEY = 'refresh_token'
+  const REFRESH_INTERVAL_TIMEOUT_MS = 10 * 60 * 1000
 
   const isInitialized = ref<boolean>(false)
 
@@ -71,8 +64,12 @@ export const useUserStore = defineStore('user', () => {
   const isAuthenticated = ref<boolean>(false)
   const token = ref<string | null>(getLocalStorageToken() || null)
   const refreshToken = ref<string | null>(getLocalStorageRefreshToken() || null)
+  const refreshTokenIntervalId = ref<number | null>(null)
   const profile = ref<ProfileDetailRequestResponseData | null>(null)
-  const getToken = computed(() => token.value)
+  const getToken = readonly(token)
+  const getProfile = readonly(profile)
+  const getIsInitialized = readonly(isInitialized)
+  const getIsAuthenticated = readonly(isAuthenticated)
 
   const setNewToken = (value: string) => {
     setLocalStorageToken(value)
@@ -95,27 +92,22 @@ export const useUserStore = defineStore('user', () => {
     clearTokenData()
     isAuthenticated.value = false
     // TODO: запрос на бэк для сброса refresh
-    // TODO: перенаправление на главную
+    clearRefreshTokenInterval()
   }
 
   const login = async (data: LoginRequestPayloadData) => {
-    let response = await sendRequest<LoginRequestResponseData>(
-      getEndpoint(urls.BASE, ['LOGIN']),
-      data,
-    )
+    let response = await sendRequest<LoginRequestResponseData>(urls.BASE.LOGIN, data)
 
     if (!response.isSuccess) throw response.data
 
     setNewRefreshToken(response.data.refresh)
     setNewToken(response.data.access)
-    // TODO: перенаправление на профиль
+    setupRefreshTokenInterval()
+    await loadProfile()
   }
 
   const register = async (data: RegisterRequestPayloadData) => {
-    let response = await sendRequest<RegisterRequestResponseData>(
-      getEndpoint(urls.BASE, ['REGISTER']),
-      data,
-    )
+    let response = await sendRequest<RegisterRequestResponseData>(urls.BASE.REGISTER, data)
 
     if (!response.isSuccess) throw response.data
 
@@ -126,12 +118,8 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const refreshAccessToken = async () => {
-    let response = await sendRequest<RefreshTokenRequestResponseData>(
-      getEndpoint(urls.BASE, ['TOKEN', 'REFRESH']),
-      {
-        refresh: String(refreshToken.value),
-      },
-    )
+    let data: RefreshTokenRequestPayloadData = { refresh: String(refreshToken.value) }
+    let response = await sendRequest<RefreshTokenRequestResponseData>(urls.BASE.TOKEN.REFRESH, data)
 
     if (response.isSuccess) {
       token.value = response.data.access
@@ -139,18 +127,13 @@ export const useUserStore = defineStore('user', () => {
       return
     }
 
-    if (response.statusCode === 401) {
-      // TODO: если на главной - остаться, иначе - на логин
-      return
-    }
+    if (response.statusCode === 401) return
 
     throw new Error('Неизвестная ошибка обновления токена')
   }
 
   const loadProfile = async () => {
-    let response = await sendRequest<ProfileDetailRequestResponseData>(
-      getEndpoint(urls.USER, ['PROFILE', 'DETAIL']),
-    )
+    let response = await sendRequest<ProfileDetailRequestResponseData>(urls.USER.PROFILE.DETAIL)
 
     if (response.isSuccess) {
       profile.value = response.data
@@ -166,7 +149,14 @@ export const useUserStore = defineStore('user', () => {
     throw new Error('Неизвестная ошибка инициализации')
   }
 
-  const setupRefreshTokenInterval = () => {}
+  const clearRefreshTokenInterval = () => {
+    if (!refreshTokenIntervalId.value) return
+    clearInterval(refreshTokenIntervalId.value)
+  }
+
+  const setupRefreshTokenInterval = () => {
+    refreshTokenIntervalId.value = setInterval(refreshAccessToken, REFRESH_INTERVAL_TIMEOUT_MS)
+  }
 
   const initStore = async () => {
     await loadProfile()
@@ -181,6 +171,9 @@ export const useUserStore = defineStore('user', () => {
 
   return {
     getToken,
+    getProfile,
+    getIsAuthenticated,
+    getIsInitialized,
     register,
     login,
     logout,

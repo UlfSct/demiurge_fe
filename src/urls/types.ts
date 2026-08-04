@@ -8,10 +8,6 @@ export type UrlEntry = {
   isAuthNotRequired?: boolean
 }
 
-export type UrlGroup = {
-  [key: string]: UrlGroup | UrlEntry
-}
-
 export type UrlObject = {
-  [key: string]: UrlGroup
+  [key: string]: UrlObject | UrlEntry
 }

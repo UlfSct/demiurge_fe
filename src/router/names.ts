@@ -4,13 +4,13 @@ export type RouterObject = {
   [key: string]: RouterObject | string | undefined
 }
 
-const ROUTER_NAMES: RouterObject = {
+const routerNames = {
   MAIN: undefined,
   LOGIN: undefined,
-  REGISTER: undefined,
+  REGISTRATION: undefined,
   PROFILE: undefined,
 }
 
-completeRouterNames(ROUTER_NAMES, 'USER')
+completeRouterNames(routerNames, 'USER')
 
-export default ROUTER_NAMES
+export default routerNames
