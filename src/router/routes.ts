@@ -13,17 +13,17 @@ const APP_ROUTES: RouteRecordRaw[] = [
   },
   {
     name: String(routerNames.REGISTRATION),
-    path: '/',
+    path: '/registration',
     component: Registration,
   },
   {
     name: String(routerNames.LOGIN),
-    path: '/',
+    path: '/login',
     component: Login,
   },
   {
     name: String(routerNames.PROFILE),
-    path: '/',
+    path: '/profile',
     component: Profile,
   },
 ]

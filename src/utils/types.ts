@@ -3,12 +3,8 @@ export type RequestQueryValue = string | number | boolean | string[]
 export type RequestParams = Record<string, RequestParamValue>
 export type RequestQuery = Record<string, RequestQueryValue>
 
-export interface RequestErrorEntry {
-  [key: string]: string
-}
-
 export type RequestErrorObject = {
-  [key: string]: RequestErrorEntry | string
+  [key: string]: string | string[]
 }
 
 export interface ISuccessResponse<T> {

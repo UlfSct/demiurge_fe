@@ -1,18 +1,37 @@
 <script setup lang="ts">
-import TopMenu from '@/components/TopMenu.vue'
+import TopMenu from '@/components/core/TopMenu.vue'
 import { useUserStore } from '@/stores/core/user.ts'
 import { storeToRefs } from 'pinia'
-import InitializationLoading from '@/components/InitializationLoading.vue'
+import InitializationLoading from '@/components/core/InitializationLoading.vue'
+import { watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import routerNames from '@/router/names.ts'
 
+const route = useRoute()
+const router = useRouter()
 const userStore = useUserStore()
 const { getIsInitialized, getIsAuthenticated } = storeToRefs(userStore)
+
+watch(getIsInitialized, (nVal) => {
+  if (!nVal) return
+  if (getIsAuthenticated.value) return
+  if (route.name === routerNames.MAIN) return
+  if (route.name === routerNames.LOGIN) return
+  if (route.name === routerNames.REGISTRATION) return
+  router.push({ name: routerNames.MAIN })
+})
+
+watch(getIsAuthenticated, (nVal) => {
+  if (nVal) return
+  router.push({ name: routerNames.MAIN })
+})
 </script>
 
 <template>
-  <v-app>
+  <v-app class="bg-brown-dark-shades">
     <top-menu />
-    <v-main class="main-container">
-      <router-view v-if="false" />
+    <v-main class="main-container bg-brown-dark-shades main-bg">
+      <router-view v-if="getIsInitialized" />
       <initialization-loading v-else />
     </v-main>
   </v-app>

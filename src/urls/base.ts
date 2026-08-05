@@ -9,6 +9,11 @@ const baseUrls = {
     method: 'POST' as const,
     isAuthNotRequired: true,
   },
+  LOGOUT: {
+    path: '/base/logout/',
+    method: 'POST' as const,
+    isAuthNotRequired: true,
+  },
   TOKEN: {
     REFRESH: {
       path: '/base/token/refresh/',

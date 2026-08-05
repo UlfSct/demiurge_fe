@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { readonly, ref } from 'vue'
+import { onMounted, readonly, ref } from 'vue'
 import { sendRequest } from '@/utils/requests.ts'
 import { urls } from '@/urls'
 import type { ISODateString } from '@/types/brands.ts'
@@ -27,6 +27,10 @@ export type RegisterRequestResponseData = {
   first_name: string
   username: string
   email: string
+}
+
+export type LogoutRequestPayloadData = {
+  refresh: string
 }
 
 export type RefreshTokenRequestPayloadData = {
@@ -88,11 +92,14 @@ export const useUserStore = defineStore('user', () => {
     refreshToken.value = null
   }
 
-  const logout = () => {
-    clearTokenData()
-    isAuthenticated.value = false
-    // TODO: запрос на бэк для сброса refresh
+  const logout = async () => {
     clearRefreshTokenInterval()
+    let data: LogoutRequestPayloadData = {
+      refresh: String(refreshToken.value),
+    }
+    isAuthenticated.value = false
+    await sendRequest(urls.BASE.LOGOUT, data)
+    clearTokenData()
   }
 
   const login = async (data: LoginRequestPayloadData) => {
@@ -127,7 +134,12 @@ export const useUserStore = defineStore('user', () => {
       return
     }
 
-    if (response.statusCode === 401) return
+    if (response.statusCode === 401) {
+      clearRefreshTokenInterval()
+      clearTokenData()
+      isAuthenticated.value = false
+      return
+    }
 
     throw new Error('Неизвестная ошибка обновления токена')
   }
@@ -165,9 +177,11 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  if (!isInitialized.value) {
-    initStore().then(() => (isInitialized.value = true))
-  }
+  onMounted(() => {
+    if (!isInitialized.value) {
+      initStore().then(() => (isInitialized.value = true))
+    }
+  })
 
   return {
     getToken,
