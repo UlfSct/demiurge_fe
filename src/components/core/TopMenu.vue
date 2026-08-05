@@ -8,7 +8,8 @@ import { storeToRefs } from 'pinia'
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
-const { getIsAuthenticated, getIsInitialized } = storeToRefs(userStore)
+const { getIsAuthenticated, getIsInitialized, getIsLoadingLogin, getIsLoadingRegister } =
+  storeToRefs(userStore)
 
 const showLoginButton = (): boolean => {
   return (
@@ -24,10 +25,12 @@ const showLogoutButton = (): boolean => {
 }
 
 const goToLogin = () => {
+  if (getIsLoadingLogin.value || getIsLoadingRegister.value) return
   router.push({ name: routerNames.LOGIN })
 }
 
 const goToMain = () => {
+  if (getIsLoadingLogin.value || getIsLoadingRegister.value) return
   router.push({ name: routerNames.MAIN })
 }
 

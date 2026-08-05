@@ -14,7 +14,7 @@ type LoginFormData = {
 
 const userStore = useUserStore()
 const router = useRouter()
-const { getIsAuthenticated } = storeToRefs(userStore)
+const { getIsAuthenticated, getIsLoadingLogin } = storeToRefs(userStore)
 const { clearErrors, clearError, getError, setError, setErrors, hasError, hasErrors } =
   useFormErrors()
 
@@ -24,10 +24,12 @@ const formData = ref<LoginFormData>({
 })
 
 const goToRegistration = () => {
+  if (getIsLoadingLogin.value) return
   router.push({ name: routerNames.REGISTRATION })
 }
 
 const goToMain = () => {
+  if (getIsLoadingLogin.value) return
   router.push({ name: routerNames.MAIN })
 }
 
@@ -49,14 +51,20 @@ const prepareFormData = (): LoginRequestPayloadData => {
 }
 
 const login = async () => {
+  userStore.setIsLoadingLoginValue(true)
   clearErrors()
   validateFromData()
-  if (hasErrors()) return
+  if (hasErrors()) {
+    userStore.setIsLoadingLoginValue(false)
+    return
+  }
   try {
     await userStore.login(prepareFormData())
     goToMain()
   } catch (error) {
     setErrors(error as RequestErrorObject)
+  } finally {
+    userStore.setIsLoadingLoginValue(false)
   }
 }
 
@@ -75,8 +83,9 @@ onMounted(() => {
             density="comfortable"
             variant="solo"
             autocomplete="username"
-            :error="hasError('username')"
-            :error-messages="getError('username')"
+            :readonly="getIsLoadingLogin"
+            :error="hasError('username') || hasError('detail')"
+            :error-messages="getError('username') || getError('detail')"
             @input="clearError('username')"
             class="form-input mb-1"
           >
@@ -89,6 +98,7 @@ onMounted(() => {
             variant="solo"
             type="password"
             autocomplete="current-password"
+            :readonly="getIsLoadingLogin"
             :error="hasError('password')"
             :error-messages="getError('password')"
             @input="onInputPassword"
@@ -98,7 +108,9 @@ onMounted(() => {
           </v-text-field>
         </v-form>
 
-        <v-btn class="form-btn w-100 mt-2" size="large" @click="login"> Войти </v-btn>
+        <v-btn class="form-btn w-100 mt-2" size="large" @click="login" :loading="getIsLoadingLogin">
+          Войти
+        </v-btn>
 
         <v-card-text class="text-center mt-4 py-0">
           <span class="form-footer-text">

@@ -18,7 +18,7 @@ type RegistrationFormData = {
 
 const userStore = useUserStore()
 const router = useRouter()
-const { getIsAuthenticated } = storeToRefs(userStore)
+const { getIsAuthenticated, getIsLoadingRegister } = storeToRefs(userStore)
 const { clearErrors, clearError, getError, setError, setErrors, hasError, hasErrors } =
   useFormErrors()
 
@@ -32,10 +32,12 @@ const formData = ref<RegistrationFormData>({
 })
 
 const goToLogin = () => {
+  if (getIsLoadingRegister.value) return
   router.push({ name: routerNames.LOGIN })
 }
 
 const goToMain = () => {
+  if (getIsLoadingRegister.value) return
   router.push({ name: routerNames.MAIN })
 }
 
@@ -64,19 +66,24 @@ const prepareFormData = (): RegisterRequestPayloadData => {
 }
 
 const register = async () => {
+  userStore.setIsLoadingRegisterValue(true)
   clearErrors()
   validateFromData()
-  if (hasErrors()) return
+  if (hasErrors()) {
+    userStore.setIsLoadingRegisterValue(false)
+    return
+  }
   try {
     await userStore.register(prepareFormData())
     goToMain()
   } catch (error) {
     setErrors(error as RequestErrorObject)
+  } finally {
+    userStore.setIsLoadingRegisterValue(false)
   }
 }
 
 onMounted(() => {
-  console.log(getIsAuthenticated.value)
   if (getIsAuthenticated.value) goToMain()
 })
 </script>
@@ -91,6 +98,7 @@ onMounted(() => {
             density="comfortable"
             variant="solo"
             autocomplete="username"
+            :readonly="getIsLoadingRegister"
             :error="hasError('username')"
             :error-messages="getError('username')"
             @input="clearError('username')"
@@ -103,6 +111,7 @@ onMounted(() => {
             density="comfortable"
             variant="solo"
             autocomplete="username"
+            :readonly="getIsLoadingRegister"
             :error="hasError('email')"
             :error-messages="getError('email')"
             @input="clearError('email')"
@@ -116,6 +125,7 @@ onMounted(() => {
             variant="solo"
             type="password"
             autocomplete="new-password"
+            :readonly="getIsLoadingRegister"
             :error="hasError('password')"
             :error-messages="getError('password')"
             @input="onInputPassword"
@@ -129,6 +139,7 @@ onMounted(() => {
             variant="solo"
             type="password"
             autocomplete="new-password"
+            :readonly="getIsLoadingRegister"
             :error="hasError('confirm_password')"
             :error-messages="getError('confirm_password')"
             @input="clearError('confirm_password')"
@@ -142,6 +153,7 @@ onMounted(() => {
             variant="solo"
             label="Имя"
             autocomplete="given-name"
+            :readonly="getIsLoadingRegister"
             :error="hasError('first_name')"
             :error-messages="getError('first_name')"
             @input="clearError('first_name')"
@@ -153,13 +165,21 @@ onMounted(() => {
             variant="solo"
             label="Фамилия"
             autocomplete="family-name"
+            :readonly="getIsLoadingRegister"
             :error="hasError('last_name')"
             :error-messages="getError('last_name')"
             @input="clearError('last_name')"
             class="form-input mb-1"
           />
         </v-form>
-        <v-btn class="form-btn w-100 mt-2" size="large" @click="register">Регистрация</v-btn>
+        <v-btn
+          class="form-btn w-100 mt-2"
+          size="large"
+          @click="register"
+          :loading="getIsLoadingRegister"
+        >
+          Зарегистрироваться
+        </v-btn>
         <v-card-text class="text-center mt-4 py-0">
           <span class="form-footer-text">
             Есть аккаунт?

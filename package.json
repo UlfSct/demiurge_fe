@@ -20,6 +20,7 @@
     "pinia": "4.0.2",
     "sass-embedded": "^1.100.0",
     "vue": "^3.5.34",
+    "vue-loading-overlay": "^6.0.6",
     "vue-router": "5.2.0",
     "vuetify": "4.1.7"
   },

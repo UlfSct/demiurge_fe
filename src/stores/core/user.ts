@@ -54,6 +54,7 @@ export const useUserStore = defineStore('user', () => {
   const ACCESS_TOKEN_LS_KEY = 'token'
   const REFRESH_TOKEN_LS_KEY = 'refresh_token'
   const REFRESH_INTERVAL_TIMEOUT_MS = 10 * 60 * 1000
+  const MIN_INIT_TIME_MS = 1000
 
   const isInitialized = ref<boolean>(false)
 
@@ -69,11 +70,23 @@ export const useUserStore = defineStore('user', () => {
   const token = ref<string | null>(getLocalStorageToken() || null)
   const refreshToken = ref<string | null>(getLocalStorageRefreshToken() || null)
   const refreshTokenIntervalId = ref<number | null>(null)
+  const isLoadingLogin = ref<boolean>(false)
+  const isLoadingRegister = ref<boolean>(false)
   const profile = ref<ProfileDetailRequestResponseData | null>(null)
   const getToken = readonly(token)
   const getProfile = readonly(profile)
   const getIsInitialized = readonly(isInitialized)
   const getIsAuthenticated = readonly(isAuthenticated)
+  const getIsLoadingLogin = readonly(isLoadingLogin)
+  const getIsLoadingRegister = readonly(isLoadingRegister)
+
+  const setIsLoadingLoginValue = (value: boolean): void => {
+    isLoadingLogin.value = value
+  }
+
+  const setIsLoadingRegisterValue = (value: boolean): void => {
+    isLoadingRegister.value = value
+  }
 
   const setNewToken = (value: string) => {
     setLocalStorageToken(value)
@@ -171,9 +184,16 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const initStore = async () => {
+    const initStartTime = Date.now()
+
     await loadProfile()
     if (isAuthenticated.value) {
       setupRefreshTokenInterval()
+    }
+
+    const elapsedTime = Date.now() - initStartTime
+    if (elapsedTime < MIN_INIT_TIME_MS) {
+      await new Promise((resolve) => setTimeout(resolve, MIN_INIT_TIME_MS - elapsedTime))
     }
   }
 
@@ -188,6 +208,10 @@ export const useUserStore = defineStore('user', () => {
     getProfile,
     getIsAuthenticated,
     getIsInitialized,
+    getIsLoadingLogin,
+    getIsLoadingRegister,
+    setIsLoadingLoginValue,
+    setIsLoadingRegisterValue,
     register,
     login,
     logout,

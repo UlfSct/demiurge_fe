@@ -15,14 +15,43 @@ export default createVuetify({
     },
   },
   theme: {
-    defaultTheme: 'light',
+    defaultTheme: 'dark',
     themes: {
       light: {
         colors: {
-          'gold-accent': '#d4af37',
-          'gold-accent-light': '#8b7355',
-          'brown-primary': '#2c1810',
-          'brown-dark-shades': '#1a0f0a',
+          'gold-accent': '#D4AF37',
+          'gold-light': '#E6C34A',
+          'gold-dark': '#8B7355',
+
+          'brown-primary': '#2C1810',
+          'brown-secondary': '#1E1109',
+          'brown-dark': '#1A0F0A',
+
+          'text-light': '#C4B5A5',
+          'text-gold': '#D4AF37',
+          'text-muted': '#8B7355',
+          'text-error': '#CC4444',
+
+          'bg-primary': '#1A0F0A',
+          'bg-secondary': '#2C1810',
+          'bg-tertiary': '#1E1109',
+
+          'border-default': 'rgba(212, 175, 55, 0.2)',
+          'border-hover': 'rgba(212, 175, 55, 0.4)',
+          'border-focus': 'rgba(212, 175, 55, 0.6)',
+
+          'red-accent': '#CC4444',
+
+          surface: '#2C1810',
+          background: '#1A0F0A',
+          primary: '#D4AF37',
+          secondary: '#8B7355',
+          error: '#CC4444',
+          'on-surface': '#C4B5A5',
+          'on-background': '#C4B5A5',
+          'on-primary': '#2C1810',
+          'on-secondary': '#2C1810',
+          'on-error': '#FFFFFF',
         },
       },
     },

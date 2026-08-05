@@ -31,8 +31,8 @@ watch(getIsAuthenticated, (nVal) => {
   <v-app class="bg-brown-dark-shades">
     <top-menu />
     <v-main class="main-container bg-brown-dark-shades main-bg">
-      <router-view v-if="getIsInitialized" />
-      <initialization-loading v-else />
+      <initialization-loading v-if="!getIsInitialized" />
+      <router-view v-else />
     </v-main>
   </v-app>
 </template>
