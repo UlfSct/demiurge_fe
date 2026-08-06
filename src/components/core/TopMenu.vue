@@ -53,7 +53,7 @@ const logout = async () => {
 </script>
 
 <template>
-  <v-app-bar class="app-bar pr-3" :height="80" flat>
+  <v-app-bar class="app-bar pr-4" :height="80" flat>
     <v-app-bar-title>
       <div class="logo" @click="goToMain">
         <div class="logo-icon">
@@ -68,19 +68,19 @@ const logout = async () => {
       </div>
     </v-app-bar-title>
     <template #append v-if="getIsInitialized">
-      <v-btn v-if="showMainButton()" class="form-btn px-4 mr-3" @click="goToMain">
+      <v-btn v-if="showMainButton()" class="form-btn px-3 mr-3" @click="goToMain">
         <v-icon left class="mr-3">home</v-icon>
         Главная
       </v-btn>
-      <v-btn v-else-if="showProfileButton()" class="form-btn px-4 mr-3" @click="goToProfile">
+      <v-btn v-else-if="showProfileButton()" class="form-btn px-3 mr-3" @click="goToProfile">
         <v-icon left class="mr-3">person</v-icon>
         Профиль
       </v-btn>
-      <v-btn v-if="showLoginButton()" class="form-btn px-4" @click="goToLogin">
+      <v-btn v-if="showLoginButton()" class="form-btn px-3" @click="goToLogin">
         <v-icon left class="mr-3">login</v-icon>
         Войти
       </v-btn>
-      <v-btn v-else-if="showLogoutButton()" class="form-btn px-4" variant="text" @click="logout">
+      <v-btn v-else-if="showLogoutButton()" class="form-btn px-3" variant="text" @click="logout">
         <v-icon left class="mr-3">logout</v-icon>
         Выйти
       </v-btn>

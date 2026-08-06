@@ -142,7 +142,7 @@ body {
   background: var(--gradient-card) !important;
   border: 2px solid var(--color-border-focus);
   box-shadow: var(--shadow-card) !important;
-  border-radius: var(--border-radius-md) !important;
+  border-radius: 0 !important;
   position: relative;
   backdrop-filter: blur(5px);
 

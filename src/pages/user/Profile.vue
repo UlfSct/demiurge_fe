@@ -22,9 +22,9 @@ const getCardTitle = (): string => {
 </script>
 
 <template>
-  <v-row no-gutters class="pa-6">
+  <v-row no-gutters class="pa-5">
     <v-card class="form-card pa-6 w-100">
-      <v-card-title class="card-title"> {{ getCardTitle() }}</v-card-title>
+      <v-card-title class="card-title"> {{ getCardTitle() }} </v-card-title>
       <v-card-text v-if="showSubtitleText()" class="card-title__subtitle">
         {{ getSubtitleText() }}
       </v-card-text>
