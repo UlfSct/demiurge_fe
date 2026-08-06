@@ -144,7 +144,7 @@ body {
   box-shadow: var(--shadow-card) !important;
   border-radius: var(--border-radius-md) !important;
   position: relative;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(5px);
 
   &::after {
     content: '';
@@ -156,7 +156,180 @@ body {
     border: 1px solid rgba(var(--gold-accent-rgb), 0.3);
     border-radius: var(--border-radius-sm);
     pointer-events: none;
-    box-shadow: inset 0 0 20px rgba(var(--gold-accent-rgb), 0.05);
+    box-shadow: inset 0 0 10px rgba(var(--gold-accent-rgb), 0.05);
+  }
+}
+
+.form-title {
+  color: var(--color-text-gold);
+  font-family: var(--font-primary), 'Georgia', 'Times New Roman', serif;
+  font-size: var(--font-size-title);
+  font-weight: bold;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  text-shadow: var(--text-glow-gold);
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+  position: relative;
+  padding-bottom: var(--spacing-md);
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: var(--gradient-gold);
+    box-shadow: var(--shadow-gold-glow);
+    border-radius: var(--border-radius-sm);
+  }
+
+  &.form-title--double-line {
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 1px;
+      background: rgba(var(--gold-accent-rgb), 0.3);
+    }
+
+    &::after {
+      width: 60px;
+      height: 2px;
+      bottom: 0;
+    }
+  }
+
+  &.form-title--ornament {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+
+    &::before,
+    &::after {
+      content: '◆';
+      color: var(--gold-accent);
+      font-size: 10px;
+      text-shadow: var(--shadow-gold-glow);
+      flex-shrink: 0;
+    }
+
+    &::before {
+      margin-right: var(--spacing-sm);
+    }
+
+    &::after {
+      margin-left: var(--spacing-sm);
+    }
+
+    .form-title__text {
+      position: relative;
+      padding-bottom: var(--spacing-sm);
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 1px;
+        background: rgba(var(--gold-accent-rgb), 0.4);
+      }
+    }
+  }
+}
+
+.card-title {
+  color: var(--color-text-gold);
+  font-family: var(--font-primary), 'Georgia', 'Times New Roman', serif;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: var(--letter-spacing-normal);
+  text-shadow: 0 0 10px rgba(var(--gold-accent-rgb), 0.3);
+  line-height: 1.3;
+
+  margin: 0 0 var(--spacing-sm) 0;
+  padding-bottom: var(--spacing-xs);
+
+  &--underlined {
+    border-bottom: 2px solid transparent;
+    border-image: var(--gradient-gold) 1;
+    padding-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+
+  /* Вариант с иконкой слева */
+  &--with-icon {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+
+    .card-title__icon {
+      color: var(--gold-accent);
+      font-size: 18px;
+      text-shadow: var(--shadow-gold-glow);
+      flex-shrink: 0;
+      opacity: 0.9;
+    }
+  }
+
+  &--accent-left {
+    position: relative;
+    padding-left: var(--spacing-md);
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 2px;
+      bottom: 2px;
+      width: 3px;
+      background: var(--gradient-gold);
+      border-radius: var(--border-radius-sm);
+      box-shadow: var(--shadow-gold-glow);
+    }
+  }
+
+  &--centered {
+    text-align: center;
+    position: relative;
+    padding-bottom: var(--spacing-md);
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 2px;
+      background: var(--gradient-gold);
+      box-shadow: var(--shadow-gold-glow);
+      border-radius: var(--border-radius-sm);
+    }
+  }
+
+  &--small {
+    font-size: 16px;
+    letter-spacing: var(--letter-spacing-tight);
+    text-shadow: 0 0 8px rgba(var(--gold-accent-rgb), 0.2);
+  }
+
+  &__subtitle {
+    display: block;
+    font-size: var(--font-size-small);
+    color: var(--color-text-muted);
+    letter-spacing: var(--letter-spacing-tight);
+    font-weight: normal;
+    margin-top: var(--spacing-xs);
+    text-shadow: none;
+    opacity: 0.8;
   }
 }
 

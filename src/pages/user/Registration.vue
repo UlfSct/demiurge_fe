@@ -60,8 +60,8 @@ const prepareFormData = (): RegisterRequestPayloadData => {
     username: String(formData.value.username),
     email: String(formData.value.email),
     password: String(formData.value.password),
-    last_name: String(formData.value.last_name),
-    first_name: String(formData.value.first_name),
+    last_name: formData.value.last_name ? String(formData.value.last_name) : '',
+    first_name: formData.value.first_name ? String(formData.value.first_name) : '',
   }
 }
 

@@ -4,12 +4,32 @@ import { storeToRefs } from 'pinia'
 
 const userStore = useUserStore()
 const { getProfile, getToken } = storeToRefs(userStore)
+
+const showSubtitleText = (): boolean => {
+  if (!getProfile.value) return false
+  return !!getProfile.value.first_name || !!getProfile.value.last_name
+}
+
+const getSubtitleText = (): string => {
+  if (!getProfile.value) return ''
+  return 'Подзаголовок'
+}
+
+const getCardTitle = (): string => {
+  if (!getProfile.value) return ''
+  return getProfile.value.username
+}
 </script>
 
 <template>
-  <div>Профиль</div>
-  <div>{{ getProfile }}</div>
-  <div>{{ getToken }}</div>
+  <v-row no-gutters class="pa-6">
+    <v-card class="form-card pa-6 w-100">
+      <v-card-title class="card-title"> {{ getCardTitle() }}</v-card-title>
+      <v-card-text v-if="showSubtitleText()" class="card-title__subtitle">
+        {{ getSubtitleText() }}
+      </v-card-text>
+    </v-card>
+  </v-row>
 </template>
 
 <style scoped></style>

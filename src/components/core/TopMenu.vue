@@ -11,6 +11,14 @@ const userStore = useUserStore()
 const { getIsAuthenticated, getIsInitialized, getIsLoadingLogin, getIsLoadingRegister } =
   storeToRefs(userStore)
 
+const showProfileButton = (): boolean => {
+  return getIsAuthenticated.value && getIsInitialized.value && route.name !== routerNames.PROFILE
+}
+
+const showMainButton = () => {
+  return getIsAuthenticated.value && getIsInitialized.value && route.name !== routerNames.MAIN
+}
+
 const showLoginButton = (): boolean => {
   return (
     !getIsAuthenticated.value &&
@@ -22,6 +30,11 @@ const showLoginButton = (): boolean => {
 
 const showLogoutButton = (): boolean => {
   return getIsAuthenticated.value && getIsInitialized.value
+}
+
+const goToProfile = () => {
+  if (getIsLoadingLogin.value || getIsLoadingRegister.value) return
+  router.push({ name: routerNames.PROFILE })
 }
 
 const goToLogin = () => {
@@ -54,7 +67,15 @@ const logout = async () => {
         </div>
       </div>
     </v-app-bar-title>
-    <template #append>
+    <template #append v-if="getIsInitialized">
+      <v-btn v-if="showMainButton()" class="form-btn px-4 mr-3" @click="goToMain">
+        <v-icon left class="mr-3">home</v-icon>
+        Главная
+      </v-btn>
+      <v-btn v-else-if="showProfileButton()" class="form-btn px-4 mr-3" @click="goToProfile">
+        <v-icon left class="mr-3">person</v-icon>
+        Профиль
+      </v-btn>
       <v-btn v-if="showLoginButton()" class="form-btn px-4" @click="goToLogin">
         <v-icon left class="mr-3">login</v-icon>
         Войти

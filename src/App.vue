@@ -21,8 +21,8 @@ watch(getIsInitialized, (nVal) => {
   router.push({ name: routerNames.MAIN })
 })
 
-watch(getIsAuthenticated, (nVal) => {
-  if (nVal) return
+watch(getIsAuthenticated, () => {
+  if (route.name === routerNames.MAIN) return
   router.push({ name: routerNames.MAIN })
 })
 </script>

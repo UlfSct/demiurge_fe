@@ -43,8 +43,8 @@ export type RefreshTokenRequestResponseData = {
 
 export type ProfileDetailRequestResponseData = {
   id: number
-  last_name: string
-  first_name: string
+  last_name: string | null
+  first_name: string | null
   username: string
   email: string
   date_joined: ISODateString
@@ -142,8 +142,9 @@ export const useUserStore = defineStore('user', () => {
     let response = await sendRequest<RefreshTokenRequestResponseData>(urls.BASE.TOKEN.REFRESH, data)
 
     if (response.isSuccess) {
-      token.value = response.data.access
+      setNewToken(response.data.access)
       isAuthenticated.value = true
+      if (!profile.value) await loadProfile()
       return
     }
 
@@ -158,6 +159,12 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const loadProfile = async () => {
+    if (!token.value) {
+      await refreshAccessToken()
+      if (!profile.value) isAuthenticated.value = false
+      return
+    }
+
     let response = await sendRequest<ProfileDetailRequestResponseData>(urls.USER.PROFILE.DETAIL)
 
     if (response.isSuccess) {
@@ -168,6 +175,7 @@ export const useUserStore = defineStore('user', () => {
 
     if (response.statusCode === 401) {
       await refreshAccessToken()
+      if (!profile.value) isAuthenticated.value = false
       return
     }
 
