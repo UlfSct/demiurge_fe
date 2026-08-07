@@ -42,7 +42,7 @@ const toggleNewPasswordVisibility = () => {
   showNewPassword.value = !showNewPassword.value
 }
 
-const validateFromData = () => {
+const validateFormData = () => {
   if (formData.value.new_password === formData.value.old_password) {
     setError('new_password', 'Новый пароль должен отличаться от предыдущего')
   }
@@ -60,7 +60,7 @@ const prepareFormData = (): ChangePasswordRequestPayloadData => {
 const apply = async () => {
   userStore.setIsLoadingChangePassword(true)
   clearErrors()
-  validateFromData()
+  validateFormData()
   if (hasErrors()) {
     userStore.setIsLoadingChangePassword(false)
     return

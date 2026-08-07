@@ -45,7 +45,7 @@ const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
 
-const validateFromData = () => {
+const validateFormData = () => {
   if (!formData.value.username) setError('username', 'Это поле обязательно для заполнения')
   if (!formData.value.password) setError('password', 'Это поле обязательно для заполнения')
 }
@@ -60,7 +60,7 @@ const prepareFormData = (): LoginRequestPayloadData => {
 const login = async () => {
   userStore.setIsLoadingLoginValue(true)
   clearErrors()
-  validateFromData()
+  validateFormData()
   if (hasErrors()) {
     userStore.setIsLoadingLoginValue(false)
     return

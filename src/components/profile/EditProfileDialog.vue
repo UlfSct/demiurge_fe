@@ -31,7 +31,7 @@ const close = (): void => {
   emit('close')
 }
 
-const validateFromData = () => {
+const validateFormData = () => {
   if (!formData.value.username) setError('username', 'Это поле обязательно для заполнения')
 }
 
@@ -46,7 +46,7 @@ const prepareFormData = () => {
 const apply = async () => {
   userStore.setIsLoadingEditProfile(true)
   clearErrors()
-  validateFromData()
+  validateFormData()
   if (hasErrors()) {
     userStore.setIsLoadingEditProfile(false)
     return

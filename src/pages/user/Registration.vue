@@ -59,7 +59,7 @@ const onInputPassword = () => {
   clearError('confirm_password')
 }
 
-const validateFromData = () => {
+const validateFormData = () => {
   if (!formData.value.username) setError('username', 'Это поле обязательно для заполнения')
   if (!formData.value.password) setError('password', 'Это поле обязательно для заполнения')
   if (!formData.value.email) setError('email', 'Это поле обязательно для заполнения')
@@ -81,7 +81,7 @@ const prepareFormData = (): RegisterRequestPayloadData => {
 const register = async () => {
   userStore.setIsLoadingRegisterValue(true)
   clearErrors()
-  validateFromData()
+  validateFormData()
   if (hasErrors()) {
     userStore.setIsLoadingRegisterValue(false)
     return
