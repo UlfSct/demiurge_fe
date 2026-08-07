@@ -22,6 +22,7 @@ watch(getIsInitialized, (nVal) => {
 })
 
 watch(getIsAuthenticated, () => {
+  if (!getIsInitialized.value) return
   if (route.name === routerNames.MAIN) return
   router.push({ name: routerNames.MAIN })
 })
@@ -30,7 +31,7 @@ watch(getIsAuthenticated, () => {
 <template>
   <v-app class="bg-brown-dark-shades">
     <top-menu />
-    <v-main class="main-container bg-brown-dark-shades main-bg">
+    <v-main class="main-container default-scrollbar bg-brown-dark-shades main-bg">
       <initialization-loading v-if="!getIsInitialized" />
       <router-view v-else />
     </v-main>

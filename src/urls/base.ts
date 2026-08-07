@@ -12,7 +12,6 @@ const baseUrls = {
   LOGOUT: {
     path: '/base/logout/',
     method: 'POST' as const,
-    isAuthNotRequired: true,
   },
   TOKEN: {
     REFRESH: {

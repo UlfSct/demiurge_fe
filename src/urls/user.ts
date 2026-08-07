@@ -4,9 +4,10 @@ const userUrls = {
       path: '/user/user/',
       method: 'GET' as const,
     },
-    EDIT: {
+    UPDATE: {
       path: '/user/user/',
       method: 'PATCH' as const,
+      isFormData: true,
     },
   },
   PASSWORD: {

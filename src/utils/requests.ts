@@ -41,15 +41,14 @@ const getDefaultAuthHeaders = (isFormData = false): HeadersInit => {
     console.warn('Токен отсутствует при попытке авторизованного запроса')
   }
 
+  const defaultHeaders = getDefaultHeaders(isFormData)
   const authHeaders: HeadersInit = {
     Authorization: `Bearer ${token}`,
   }
 
-  if (isFormData) return authHeaders
-
   return {
+    ...defaultHeaders,
     ...authHeaders,
-    'Content-Type': 'application/json',
   }
 }
 
@@ -178,4 +177,30 @@ export const sendRequest = async <T>(
       data: { _error: 'Не удалось обработать ответ сервера' },
     }
   }
+}
+
+export const executeWithMinDuration = async <T>(
+  fn: () => Promise<T>,
+  minTime: number = 500,
+): Promise<T> => {
+  const startTime = Date.now()
+  let result: T
+  let error: unknown
+
+  try {
+    result = await fn()
+  } catch (e) {
+    error = e
+  }
+
+  const elapsed = Date.now() - startTime
+  if (elapsed < minTime) {
+    await new Promise((resolve) => setTimeout(resolve, minTime - elapsed))
+  }
+
+  if (error !== undefined) {
+    throw error
+  }
+
+  return result!
 }

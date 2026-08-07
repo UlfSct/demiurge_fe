@@ -23,6 +23,8 @@ const formData = ref<LoginFormData>({
   password: null,
 })
 
+const showPassword = ref(false)
+
 const goToRegistration = () => {
   if (getIsLoadingLogin.value) return
   router.push({ name: routerNames.REGISTRATION })
@@ -36,6 +38,11 @@ const goToMain = () => {
 const onInputPassword = () => {
   clearError('password')
   clearError('confirm_password')
+}
+
+const togglePasswordVisibility = () => {
+  if (getIsLoadingLogin.value) return
+  showPassword.value = !showPassword.value
 }
 
 const validateFromData = () => {
@@ -76,7 +83,7 @@ onMounted(() => {
 <template>
   <v-row no-gutters class="fill-height justify-center align-content-center no-auth-bg">
     <v-col cols="4" class="justify-items-center">
-      <v-card class="form-card pa-6" max-width="420" min-width="380">
+      <v-card class="default-card pa-6" max-width="420" min-width="380">
         <v-form @submit.prevent="login">
           <v-text-field
             v-model="formData.username"
@@ -87,24 +94,36 @@ onMounted(() => {
             :error="hasError('username') || hasError('detail')"
             :error-messages="getError('username') || getError('detail')"
             @input="clearError('username')"
+            @keydown.enter="login"
             class="form-input mb-1"
           >
             <template #label>Логин<span class="color--red">*</span></template>
           </v-text-field>
 
+          <!-- Пароль с кастомной кнопкой -->
           <v-text-field
             v-model="formData.password"
+            :type="showPassword ? 'text' : 'password'"
             density="comfortable"
             variant="solo"
-            type="password"
             autocomplete="current-password"
             :readonly="getIsLoadingLogin"
             :error="hasError('password')"
             :error-messages="getError('password')"
             @input="onInputPassword"
-            class="form-input mb-1"
+            @keydown.enter="login"
+            class="form-input mb-1 password-input"
           >
             <template #label>Пароль<span class="color--red">*</span></template>
+
+            <template #append-inner>
+              <v-btn
+                :icon="showPassword ? 'visibility' : 'visibility_off'"
+                class="form-btn__icon--no-shadow"
+                :readonly="getIsLoadingLogin"
+                @click="togglePasswordVisibility"
+              />
+            </template>
           </v-text-field>
         </v-form>
 
@@ -123,4 +142,17 @@ onMounted(() => {
   </v-row>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+// Скрываем стандартный браузерный глазок
+.password-input :deep(input[type='password']::-ms-reveal),
+.password-input :deep(input[type='password']::-ms-clear) {
+  display: none;
+}
+
+.password-input :deep(input[type='password']::-webkit-credentials-auto-fill-button),
+.password-input :deep(input[type='password']::-webkit-caps-lock-indicator) {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+}
+</style>

@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 import { onMounted, readonly, ref } from 'vue'
-import { sendRequest } from '@/utils/requests.ts'
+import { sendRequest, executeWithMinDuration } from '@/utils/requests.ts'
 import { urls } from '@/urls'
 import type { ISODateString } from '@/types/brands.ts'
+import type { EmptyObject } from '@/types/utils.ts'
 
 export type LoginRequestPayloadData = {
   username: string
@@ -48,13 +49,26 @@ export type ProfileDetailRequestResponseData = {
   username: string
   email: string
   date_joined: ISODateString
+  avatar: string | null
+}
+
+export type UpdateProfileRequestResponseData = {
+  last_name: string | null
+  first_name: string | null
+  username: string
+  email: string
+  avatar: string | null
+}
+
+export type ChangePasswordRequestPayloadData = {
+  new_password: string
+  old_password: string
 }
 
 export const useUserStore = defineStore('user', () => {
   const ACCESS_TOKEN_LS_KEY = 'token'
   const REFRESH_TOKEN_LS_KEY = 'refresh_token'
   const REFRESH_INTERVAL_TIMEOUT_MS = 10 * 60 * 1000
-  const MIN_INIT_TIME_MS = 1000
 
   const isInitialized = ref<boolean>(false)
 
@@ -72,6 +86,9 @@ export const useUserStore = defineStore('user', () => {
   const refreshTokenIntervalId = ref<number | null>(null)
   const isLoadingLogin = ref<boolean>(false)
   const isLoadingRegister = ref<boolean>(false)
+  const isLoadingEditProfile = ref<boolean>(false)
+  const isLoadingEditProfileAvatar = ref<boolean>(false)
+  const isLoadingChangePassword = ref<boolean>(false)
   const profile = ref<ProfileDetailRequestResponseData | null>(null)
   const getToken = readonly(token)
   const getProfile = readonly(profile)
@@ -79,6 +96,9 @@ export const useUserStore = defineStore('user', () => {
   const getIsAuthenticated = readonly(isAuthenticated)
   const getIsLoadingLogin = readonly(isLoadingLogin)
   const getIsLoadingRegister = readonly(isLoadingRegister)
+  const getIsLoadingEditProfile = readonly(isLoadingEditProfile)
+  const getIsLoadingEditProfileAvatar = readonly(isLoadingEditProfileAvatar)
+  const getIsLoadingChangePassword = readonly(isLoadingChangePassword)
 
   const setIsLoadingLoginValue = (value: boolean): void => {
     isLoadingLogin.value = value
@@ -86,6 +106,18 @@ export const useUserStore = defineStore('user', () => {
 
   const setIsLoadingRegisterValue = (value: boolean): void => {
     isLoadingRegister.value = value
+  }
+
+  const setIsLoadingEditProfile = (value: boolean): void => {
+    isLoadingEditProfile.value = value
+  }
+
+  const setIsLoadingEditProfileAvatar = (value: boolean): void => {
+    isLoadingEditProfileAvatar.value = value
+  }
+
+  const setIsLoadingChangePassword = (value: boolean): void => {
+    isLoadingChangePassword.value = value
   }
 
   const setNewToken = (value: string) => {
@@ -105,6 +137,40 @@ export const useUserStore = defineStore('user', () => {
     refreshToken.value = null
   }
 
+  const updatedProfileValue = (data: ProfileDetailRequestResponseData | null) => {
+    profile.value = data
+  }
+
+  const changePassword = async (data: ChangePasswordRequestPayloadData) => {
+    await executeWithMinDuration(async () => {
+      let response = await sendRequest<EmptyObject>(urls.USER.PASSWORD.CHANGE, data)
+      if (!response.isSuccess) throw response.data
+    })
+  }
+
+  const updateProfile = async (data: FormData) => {
+    await executeWithMinDuration(async () => {
+      let response = await sendRequest<UpdateProfileRequestResponseData>(
+        urls.USER.PROFILE.UPDATE,
+        data,
+      )
+      if (!response.isSuccess) throw response.data
+      if (!profile.value) {
+        await loadProfile()
+        return
+      }
+      updatedProfileValue({
+        id: profile.value.id,
+        last_name: response.data.last_name,
+        first_name: response.data.first_name,
+        username: response.data.username,
+        email: response.data.email,
+        date_joined: profile.value.date_joined,
+        avatar: response.data.avatar,
+      })
+    })
+  }
+
   const logout = async () => {
     clearRefreshTokenInterval()
     let data: LogoutRequestPayloadData = {
@@ -115,25 +181,35 @@ export const useUserStore = defineStore('user', () => {
     clearTokenData()
   }
 
-  const login = async (data: LoginRequestPayloadData) => {
-    let response = await sendRequest<LoginRequestResponseData>(urls.BASE.LOGIN, data)
+  const login = async (data: LoginRequestPayloadData, noMinDuration: boolean = false) => {
+    await executeWithMinDuration(
+      async () => {
+        let response = await sendRequest<LoginRequestResponseData>(urls.BASE.LOGIN, data)
 
-    if (!response.isSuccess) throw response.data
+        if (!response.isSuccess) throw response.data
 
-    setNewRefreshToken(response.data.refresh)
-    setNewToken(response.data.access)
-    setupRefreshTokenInterval()
-    await loadProfile()
+        setNewRefreshToken(response.data.refresh)
+        setNewToken(response.data.access)
+        setupRefreshTokenInterval()
+        await loadProfile()
+      },
+      noMinDuration ? 0 : 500,
+    )
   }
 
   const register = async (data: RegisterRequestPayloadData) => {
-    let response = await sendRequest<RegisterRequestResponseData>(urls.BASE.REGISTER, data)
+    await executeWithMinDuration(async () => {
+      let response = await sendRequest<RegisterRequestResponseData>(urls.BASE.REGISTER, data)
 
-    if (!response.isSuccess) throw response.data
+      if (!response.isSuccess) throw response.data
 
-    await login({
-      username: data.username,
-      password: data.password,
+      await login(
+        {
+          username: data.username,
+          password: data.password,
+        },
+        true,
+      )
     })
   }
 
@@ -168,7 +244,7 @@ export const useUserStore = defineStore('user', () => {
     let response = await sendRequest<ProfileDetailRequestResponseData>(urls.USER.PROFILE.DETAIL)
 
     if (response.isSuccess) {
-      profile.value = response.data
+      updatedProfileValue(response.data)
       isAuthenticated.value = true
       return
     }
@@ -192,17 +268,12 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const initStore = async () => {
-    const initStartTime = Date.now()
-
-    await loadProfile()
-    if (isAuthenticated.value) {
-      setupRefreshTokenInterval()
-    }
-
-    const elapsedTime = Date.now() - initStartTime
-    if (elapsedTime < MIN_INIT_TIME_MS) {
-      await new Promise((resolve) => setTimeout(resolve, MIN_INIT_TIME_MS - elapsedTime))
-    }
+    await executeWithMinDuration(async () => {
+      await loadProfile()
+      if (isAuthenticated.value) {
+        setupRefreshTokenInterval()
+      }
+    })
   }
 
   onMounted(() => {
@@ -218,10 +289,18 @@ export const useUserStore = defineStore('user', () => {
     getIsInitialized,
     getIsLoadingLogin,
     getIsLoadingRegister,
+    getIsLoadingEditProfile,
+    getIsLoadingEditProfileAvatar,
+    getIsLoadingChangePassword,
     setIsLoadingLoginValue,
     setIsLoadingRegisterValue,
+    setIsLoadingEditProfile,
+    setIsLoadingEditProfileAvatar,
+    setIsLoadingChangePassword,
     register,
     login,
     logout,
+    updateProfile,
+    changePassword,
   }
 })
