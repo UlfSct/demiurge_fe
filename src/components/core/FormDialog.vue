@@ -3,14 +3,14 @@ const emit = defineEmits<{
   close: [applied: boolean]
 }>()
 
-interface Props {
+interface IProps {
   title?: string
   applyText?: string
   loading?: boolean
   maxWidth?: number
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<IProps>(), {
   title: 'Заголовок',
   applyText: 'Подтвердить',
   loading: false,

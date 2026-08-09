@@ -9,6 +9,18 @@ const routerNames = {
   LOGIN: undefined,
   REGISTRATION: undefined,
   PROFILE: undefined,
+  WORlDS: {
+    LIST: undefined,
+  },
+  WORKSPACES: {
+    LIST: undefined,
+  },
+  CHARACTERS: {
+    LIST: undefined,
+  },
+  PARTIES: {
+    LIST: undefined,
+  },
 }
 
 completeRouterNames(routerNames, 'USER')

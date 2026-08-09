@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { toRefs } from 'vue'
 
-interface Props {
+interface IProps {
   avatar?: string | undefined
   size?: number | undefined
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<IProps>(), {
   avatar: undefined,
   size: 120,
 })

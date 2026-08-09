@@ -37,7 +37,7 @@ const getUsernameText = (): string => {
 
 const getAvatarUrl = (): string | undefined => {
   if (!getProfile.value || !getProfile.value.avatar) return undefined
-  return getProfile.value.avatar
+  return getProfile.value.avatar.url
 }
 
 const getJoined = (): string => {
@@ -81,7 +81,12 @@ const closeChangePasswordDialog = () => {
       <v-card class="default-card pa-6">
         <v-card-title class="default-title mb-6">Профиль</v-card-title>
         <v-col class="d-flex flex-column align-center mb-6">
-          <user-avatar class="cursor-pointer" :avatar="getAvatarUrl()" :size="120">
+          <user-avatar
+            class="cursor-pointer"
+            :avatar="getAvatarUrl()"
+            :size="120"
+            @click="openEditAvatarDialog"
+          >
             <div
               class="avatar-overlay"
               @mouseenter="(e) => ((e.currentTarget as HTMLElement).style.opacity = '1')"

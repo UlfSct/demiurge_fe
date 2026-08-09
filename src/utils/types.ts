@@ -21,7 +21,7 @@ export interface IErrorResponse {
 
 export type RequestResponse<T> = ISuccessResponse<T> | IErrorResponse
 
-export interface CookieOptions {
+export interface ICookieOptions {
   expires?: Date | number | string
   path?: string
   domain?: string

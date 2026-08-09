@@ -7,10 +7,6 @@ import { useUserStore } from '@/stores/core/user.ts'
 import type { RequestErrorObject } from '@/utils/types.ts'
 import UserAvatar from '@/components/core/UserAvatar.vue'
 
-type EditProfileFormData = {
-  avatar: File | null
-}
-
 const emit = defineEmits<{
   close: []
 }>()
@@ -19,9 +15,7 @@ const userStore = useUserStore()
 const { clearErrors, clearError, getError, setErrors, hasError, hasErrors } = useFormErrors()
 const { getProfile, getIsLoadingEditProfile } = storeToRefs(userStore)
 
-const formData = ref<EditProfileFormData>({
-  avatar: null,
-})
+const avatar = ref<File | null>(null)
 
 const close = (): void => {
   emit('close')
@@ -29,7 +23,7 @@ const close = (): void => {
 
 const prepareFormData = () => {
   let data = new FormData()
-  data.append('avatar', formData.value.avatar ? formData.value.avatar : '')
+  data.append('avatar', avatar.value ? avatar.value : '')
   return data
 }
 
@@ -63,18 +57,10 @@ const onCloseHandler = (applied: boolean): void => {
     :loading="getIsLoadingEditProfile"
     @close="onCloseHandler"
   >
-    <v-row no-gutters class="justify-space-between mb-3">
-      <v-col cols="6">
-        <v-row no-gutters class="w-100 justify-center">
-          <user-avatar :avatar="undefined" :size="150" />
-        </v-row>
-      </v-col>
-      <v-col cols="6">
-        <v-row no-gutters class="w-100 justify-center">
-          <user-avatar :avatar="undefined" :size="150" />
-        </v-row>
-      </v-col>
+    <v-row no-gutters class="justify-center mb-3">
+      <user-avatar :avatar="undefined" :size="330" />
     </v-row>
+    <v-file-input v-model="avatar" />
   </form-dialog>
 </template>
 

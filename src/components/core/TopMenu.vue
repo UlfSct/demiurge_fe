@@ -4,10 +4,12 @@ import { useUserStore } from '@/stores/core/user.ts'
 import routerNames from '@/router/names.ts'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { useDisplay } from 'vuetify/framework'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+const display = useDisplay()
 const { getIsAuthenticated, getIsInitialized, getIsLoadingLogin, getIsLoadingRegister } =
   storeToRefs(userStore)
 
@@ -68,21 +70,21 @@ const logout = async () => {
       </div>
     </v-app-bar-title>
     <template #append v-if="getIsInitialized">
-      <v-btn v-if="showMainButton()" class="form-btn px-3 mr-3" @click="goToMain">
-        <v-icon left class="mr-3">home</v-icon>
-        Главная
+      <v-btn v-if="showProfileButton()" class="form-btn px-3 mr-3" @click="goToProfile">
+        <v-icon :class="{ 'mr-3': display.smAndUp.value }"> person </v-icon>
+        <template v-if="display.smAndUp.value">Профиль</template>
       </v-btn>
-      <v-btn v-else-if="showProfileButton()" class="form-btn px-3 mr-3" @click="goToProfile">
-        <v-icon left class="mr-3">person</v-icon>
-        Профиль
+      <v-btn v-else-if="showMainButton()" class="form-btn px-3 mr-3" @click="goToMain">
+        <v-icon :class="{ 'mr-3': display.smAndUp.value }"> home </v-icon>
+        <template v-if="display.smAndUp.value">Главная</template>
       </v-btn>
       <v-btn v-if="showLoginButton()" class="form-btn px-3" @click="goToLogin">
-        <v-icon left class="mr-3">login</v-icon>
-        Войти
+        <v-icon :class="{ 'mr-3': display.smAndUp.value }"> login </v-icon>
+        <template v-if="display.smAndUp.value">Войти</template>
       </v-btn>
       <v-btn v-else-if="showLogoutButton()" class="form-btn px-3" variant="text" @click="logout">
-        <v-icon left class="mr-3">logout</v-icon>
-        Выйти
+        <v-icon :class="{ 'mr-3': display.smAndUp.value }"> logout </v-icon>
+        <template v-if="display.smAndUp.value">Выйти</template>
       </v-btn>
     </template>
   </v-app-bar>
@@ -109,6 +111,10 @@ const logout = async () => {
   position: relative;
   z-index: 1;
   max-width: 250px;
+
+  @media (max-width: 700px) {
+    max-width: 65px;
+  }
 
   &::before {
     content: '';
@@ -145,6 +151,10 @@ const logout = async () => {
   display: flex;
   flex-direction: column;
   line-height: 1.2;
+
+  @media (max-width: 700px) {
+    display: none;
+  }
 }
 
 .logo-title {

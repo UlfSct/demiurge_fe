@@ -1,6 +1,6 @@
-import type { CookieOptions } from '@/utils/types.ts'
+import type { ICookieOptions } from '@/utils/types.ts'
 
-export const setCookie = (name: string, value: string, options: CookieOptions = {}): void => {
+export const setCookie = (name: string, value: string, options: ICookieOptions = {}): void => {
   let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`
 
   if (options.expires) {
@@ -34,7 +34,7 @@ export const getCookie = (name: string): string | null => {
 
 export const deleteCookie = (
   name: string,
-  options: Pick<CookieOptions, 'path' | 'domain' | 'secure'> = {},
+  options: Pick<ICookieOptions, 'path' | 'domain' | 'secure'> = {},
 ): void => {
   setCookie(name, '', {
     ...options,

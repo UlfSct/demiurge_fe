@@ -3,7 +3,7 @@ import { onMounted, readonly, ref } from 'vue'
 import { sendRequest, executeWithMinDuration } from '@/utils/requests.ts'
 import { urls } from '@/urls'
 import type { ISODateString } from '@/types/brands.ts'
-import type { EmptyObject } from '@/types/utils.ts'
+import type { EmptyObject, FileObject } from '@/types/utils.ts'
 
 export type LoginRequestPayloadData = {
   username: string
@@ -49,7 +49,7 @@ export type ProfileDetailRequestResponseData = {
   username: string
   email: string
   date_joined: ISODateString
-  avatar: string | null
+  avatar: FileObject | null
 }
 
 export type UpdateProfileRequestResponseData = {
@@ -57,7 +57,7 @@ export type UpdateProfileRequestResponseData = {
   first_name: string | null
   username: string
   email: string
-  avatar: string | null
+  avatar: FileObject | null
 }
 
 export type ChangePasswordRequestPayloadData = {
