@@ -95,10 +95,13 @@ const closeChangePasswordDialog = () => {
               <v-icon icon="photo" color="gold-accent" size="32" />
             </div>
           </user-avatar>
-          <v-card-text class="card-title card-title--centered">
+          <v-card-text class="card-title card-title--centered text-wrap text-break">
             {{ getUsernameText() }}
           </v-card-text>
-          <v-card-text v-if="showSubtitleText()" class="card-title__subtitle pt-1">
+          <v-card-text
+            v-if="showSubtitleText()"
+            class="card-title__subtitle pt-1 text-center text-wrap text-break"
+          >
             {{ getUsernameSubtitleText() }}
           </v-card-text>
           <v-row no-gutters class="d-flex ga-2">
@@ -112,7 +115,7 @@ const closeChangePasswordDialog = () => {
             <v-icon icon="email" size="20" class="mr-4 ml-2" opacity="0.7" color="gold-accent" />
             <v-row no-gutters>
               <v-col cols="12" class="text-caption"> EMAIL </v-col>
-              <v-col cols="12" class="text-body-1">
+              <v-col cols="12" class="text-body-1 text-wrap text-break">
                 {{ getEmail() }}
               </v-col>
             </v-row>
@@ -127,7 +130,7 @@ const closeChangePasswordDialog = () => {
             />
             <v-row no-gutters>
               <v-col cols="12" class="text-caption"> НА ПОРТАЛЕ С </v-col>
-              <v-col cols="12" class="text-body-1">
+              <v-col cols="12" class="text-body-1 text-wrap text-break">
                 {{ getJoined() }}
               </v-col>
             </v-row>
