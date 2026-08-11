@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import FormDialog from '@/components/core/FormDialog.vue'
 import { useFormErrors } from '@/composables/useFormErrors.ts'
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/core/user.ts'
 import type { RequestErrorObject } from '@/utils/types.ts'
@@ -105,8 +105,7 @@ const onFileChange = async (e: Event): Promise<void> => {
   }
   reader.readAsDataURL(resizedBlob)
 
-  const resizedFile = new File([resizedBlob], file.name, { type: file.type })
-  avatarField.value = resizedFile
+  avatarField.value = new File([resizedBlob], file.name, { type: file.type })
 }
 
 const crop = async (): Promise<void> => {
