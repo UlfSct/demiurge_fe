@@ -179,6 +179,20 @@ export const sendRequest = async <T>(
   }
 }
 
+export const sendGetFileRequest = async (url: string) => {
+  const headers: HeadersInit = getDefaultAuthHeaders(false)
+  let response: Response
+  try {
+    response = await fetch(url, {
+      method: 'GET',
+      headers,
+    })
+  } catch (e) {
+    throw e
+  }
+  return await response.blob()
+}
+
 export const executeWithMinDuration = async <T>(
   fn: () => Promise<T>,
   minTime: number = 500,
@@ -203,4 +217,13 @@ export const executeWithMinDuration = async <T>(
   }
 
   return result!
+}
+
+export const blobToBase64 = (blob: Blob): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
 }

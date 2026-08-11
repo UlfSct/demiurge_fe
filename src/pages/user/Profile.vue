@@ -77,14 +77,14 @@ const closeChangePasswordDialog = () => {
 
 <template>
   <v-row no-gutters class="pa-5 justify-center">
-    <v-col cols="12" md="8" lg="6">
+    <v-col cols="12" md="8" lg="6" xl="4">
       <v-card class="default-card pa-6">
         <v-card-title class="default-title mb-6">Профиль</v-card-title>
         <v-col class="d-flex flex-column align-center mb-6">
           <user-avatar
             class="cursor-pointer"
             :avatar="getAvatarUrl()"
-            :size="120"
+            :size="250"
             @click="openEditAvatarDialog"
           >
             <div
@@ -104,7 +104,7 @@ const closeChangePasswordDialog = () => {
           >
             {{ getUsernameSubtitleText() }}
           </v-card-text>
-          <v-row no-gutters class="d-flex ga-2">
+          <v-row no-gutters class="d-flex ga-3">
             <v-btn icon="edit" class="form-btn__icon" @click="openEditDialog" />
             <v-btn icon="photo" class="form-btn__icon" @click="openEditAvatarDialog" />
             <v-btn icon="lock_reset" class="form-btn__icon" @click="openChangePasswordDialog" />

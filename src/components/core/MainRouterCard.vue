@@ -22,7 +22,7 @@ const goTo = (routeName: string) => {
 </script>
 
 <template>
-  <v-card class="default-card pa-2 mx-3 fill-height d-flex flex-column">
+  <v-card class="default-card pa-2 fill-height d-flex flex-column">
     <v-img :src="props.item.image" :aspect-ratio="20 / 9" cover />
     <v-card-title class="card-title text-wrap pt-3">{{ props.item.title }}</v-card-title>
     <v-card-text class="card-title card-title__subtitle">{{ props.item.text }}</v-card-text>

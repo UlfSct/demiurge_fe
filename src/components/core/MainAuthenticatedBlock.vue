@@ -35,8 +35,15 @@ const cards: IMainRouterCard[] = [
 </script>
 
 <template>
-  <v-row no-gutters class="mt-3 mx-2 justify-center align-items-stretch">
-    <v-col v-for="(item, i) in cards" :key="`main-card-${i}`" cols="12" sm="6" xl="3" class="pb-3">
+  <v-row no-gutters class="py-5 px-3 justify-center align-items-stretch">
+    <v-col
+      v-for="(item, i) in cards"
+      :key="`main-card-${i}`"
+      cols="12"
+      sm="6"
+      xl="3"
+      class="pb-4 px-2"
+    >
       <main-router-card :item="item" />
     </v-col>
   </v-row>
