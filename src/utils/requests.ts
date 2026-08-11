@@ -6,8 +6,8 @@ import type {
   RequestQuery,
   RequestQueryValue,
   RequestResponse,
-} from '@/utils/types.ts'
-import type { UrlEntry } from '@/urls/types.ts'
+} from '@/types/requests.ts'
+import type { UrlEntry } from '@/types/urls.ts'
 
 const appendSingleQueryParam = (url: URL, key: string, value: RequestQueryValue) => {
   if (Array.isArray(value)) {

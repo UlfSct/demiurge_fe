@@ -1,22 +1,24 @@
+import { HTTP_METHODS } from '@/utils/consts.ts'
+
 const baseUrls = {
   LOGIN: {
     path: '/base/login/',
-    method: 'POST' as const,
+    method: HTTP_METHODS.POST,
     isAuthNotRequired: true,
   },
   REGISTER: {
     path: '/base/register/',
-    method: 'POST' as const,
+    method: HTTP_METHODS.POST,
     isAuthNotRequired: true,
   },
   LOGOUT: {
     path: '/base/logout/',
-    method: 'POST' as const,
+    method: HTTP_METHODS.POST,
   },
   TOKEN: {
     REFRESH: {
       path: '/base/token/refresh/',
-      method: 'POST' as const,
+      method: HTTP_METHODS.POST,
       isAuthNotRequired: true,
     },
   },

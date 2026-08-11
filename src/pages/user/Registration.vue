@@ -4,7 +4,7 @@ import routerNames from '@/router/names.ts'
 import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import { useFormErrors } from '@/composables/useFormErrors.ts'
-import type { RequestErrorObject } from '@/utils/types.ts'
+import type { RequestErrorObject } from '@/types/requests.ts'
 import { storeToRefs } from 'pinia'
 
 type RegistrationFormData = {

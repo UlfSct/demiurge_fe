@@ -3,7 +3,8 @@ import { onMounted, readonly, ref } from 'vue'
 import { sendRequest, executeWithMinDuration } from '@/utils/requests.ts'
 import { urls } from '@/urls'
 import type { ISODateString } from '@/types/brands.ts'
-import type { EmptyObject, FileObject } from '@/types/utils.ts'
+import type { EmptyObject } from '@/types/utils.ts'
+import type { FileObject } from '@/types/requests.ts'
 
 export type LoginRequestPayloadData = {
   username: string

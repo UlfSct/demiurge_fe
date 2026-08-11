@@ -1,4 +1,4 @@
-import type { RequestErrorObject } from '@/utils/types.ts'
+import type { RequestErrorObject } from '@/types/requests.ts'
 import { ref } from 'vue'
 
 export const useFormErrors = () => {

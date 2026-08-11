@@ -1,4 +1,4 @@
-import type { ICookieOptions } from '@/utils/types.ts'
+import type { ICookieOptions } from '@/types/cookie.ts'
 
 export const setCookie = (name: string, value: string, options: ICookieOptions = {}): void => {
   let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`

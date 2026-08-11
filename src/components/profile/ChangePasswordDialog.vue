@@ -4,7 +4,7 @@ import { useFormErrors } from '@/composables/useFormErrors.ts'
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { type ChangePasswordRequestPayloadData, useUserStore } from '@/stores/core/user.ts'
-import type { RequestErrorObject } from '@/utils/types.ts'
+import type { RequestErrorObject } from '@/types/requests.ts'
 
 type ChangePasswordFormData = {
   new_password: string

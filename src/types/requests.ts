@@ -1,3 +1,5 @@
+import type { HTTP_METHODS } from '@/utils/consts.ts'
+
 export type RequestParamValue = string | number | boolean
 export type RequestQueryValue = string | number | boolean | string[]
 export type RequestParams = Record<string, RequestParamValue>
@@ -21,13 +23,11 @@ export interface IErrorResponse {
 
 export type RequestResponse<T> = ISuccessResponse<T> | IErrorResponse
 
-export interface ICookieOptions {
-  expires?: Date | number | string
-  path?: string
-  domain?: string
-  secure?: boolean
-  sameSite?: 'Strict' | 'Lax' | 'None'
-  maxAge?: number
-  httpOnly?: boolean
-  partitioned?: boolean
+export type PaginatedResponse<T> = {
+  data: T[]
+  next: string | null
+  previous: string | null
+  count: number
 }
+
+export type RequestMethod = `${HTTP_METHODS}`
