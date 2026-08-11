@@ -6,15 +6,17 @@ import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/core/user.ts'
 import type { RequestErrorObject } from '@/utils/types.ts'
 import { blobToBase64, sendGetFileRequest } from '@/utils/requests.ts'
-import UserAvatar from '@/components/core/UserAvatar.vue'
 import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'
 import { VFileInput } from 'vuetify/components'
-import { ALLOWED_FILE_MIME_TYPES, ALLOWED_FILE_TYPES } from '@/utils/consts.ts'
+import { ALLOWED_FILE_MIME_TYPES, ALLOWED_FILE_TYPES, EMPTY_FILE_VALUE } from '@/utils/consts.ts'
+import { resizeImage } from '@/utils/image.ts'
 
 const emit = defineEmits<{
   close: []
 }>()
+
+const CROPPER_SIZE = 300
 
 const userStore = useUserStore()
 const { clearErrors, getError, setError, setErrors, hasError, hasErrors } = useFormErrors()
@@ -47,7 +49,7 @@ const canvasToFile = (canvas: HTMLCanvasElement, fileName: string): Promise<File
 
 const prepareFormData = () => {
   let data = new FormData()
-  data.append('avatar', avatarField.value ? avatarField.value : '')
+  data.append('avatar', avatarField.value ? avatarField.value : EMPTY_FILE_VALUE)
   return data
 }
 
@@ -85,7 +87,7 @@ const validateFile = (file: File) => {
   }
 }
 
-const onFileChange = (e: Event): void => {
+const onFileChange = async (e: Event): Promise<void> => {
   const target = e.target as HTMLInputElement
   const file = target.files?.[0]
   if (!file) return
@@ -95,11 +97,16 @@ const onFileChange = (e: Event): void => {
     return
   }
 
+  const resizedBlob = await resizeImage(file, CROPPER_SIZE, CROPPER_SIZE)
+
   const reader = new FileReader()
   reader.onload = (event: ProgressEvent<FileReader>) => {
     imageSrc.value = event.target?.result as string
   }
-  reader.readAsDataURL(file)
+  reader.readAsDataURL(resizedBlob)
+
+  const resizedFile = new File([resizedBlob], file.name, { type: file.type })
+  avatarField.value = resizedFile
 }
 
 const crop = async (): Promise<void> => {
@@ -136,9 +143,16 @@ onMounted(async () => {
     return
   }
   let fileData = await sendGetFileRequest(getProfile.value.avatar.url)
-  imageSrc.value = await blobToBase64(fileData)
-  avatarField.value = new File([fileData], getProfile.value.avatar.name, {
-    type: fileData.type,
+
+  const resizedBlob = await resizeImage(
+    new File([fileData], getProfile.value.avatar.name, { type: fileData.type }),
+    CROPPER_SIZE,
+    CROPPER_SIZE,
+  )
+
+  imageSrc.value = await blobToBase64(resizedBlob)
+  avatarField.value = new File([resizedBlob], getProfile.value.avatar.name, {
+    type: resizedBlob.type,
   })
   loadingAvatar.value = false
 })
@@ -161,11 +175,15 @@ onMounted(async () => {
             movable: true,
             resizable: true,
           }"
-          :stencil-size="{
-            width: 200,
-            height: 200,
-          }"
-          image-restriction="fit-area"
+          :min-width="70"
+          :min-height="70"
+          :max-width="300"
+          :max-height="300"
+          :wheel-zoom="false"
+          :zoom="false"
+          :zoomable="false"
+          :movable-image="false"
+          image-restriction="fill-area"
           class="cropper px-3 py-4"
         />
       </v-row>

@@ -9,3 +9,4 @@ export const ALLOWED_FILE_MIME_TYPES = [
 export const ALLOWED_FILE_TYPES = ALLOWED_FILE_MIME_TYPES.map(
   (item) => `.${String(item.split('/')[1])}`,
 )
+export const EMPTY_FILE_VALUE = '__clear__'

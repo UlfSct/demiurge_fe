@@ -113,6 +113,12 @@
   --spacing-lg: 24px;
 }
 
+@for $i from 1 through 20 {
+  .max-width-#{$i * 50} {
+    max-width: #{$i * 50}px !important;
+  }
+}
+
 .default-scrollbar {
   scrollbar-width: auto !important;
   scrollbar-color: var(--gold-accent) var(--brown-secondary) !important;
@@ -411,6 +417,11 @@ body {
     border-image: var(--gradient-gold) 1;
     padding-bottom: var(--spacing-sm);
     margin-bottom: var(--spacing-md);
+  }
+
+  &--no-margins {
+    padding: 0!important;
+    margin: 0!important;
   }
 
   /* Вариант с иконкой слева */
