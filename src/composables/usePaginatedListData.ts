@@ -26,10 +26,22 @@ export const usePaginatedListData = <T>(
   const requestParams = ref<RequestParams>({ ...defaultParams })
   const additionalQuery = ref<RequestQuery>({ ...defaultQuery })
 
-  watchEffect(
-    async () =>
-      await loadData(page.value, itemsPerPage.value, requestParams.value, additionalQuery.value),
-  )
+  let needPageReset = false
+
+  watchEffect(async () => {
+    if (needPageReset && page.value !== 1) {
+      page.value = 1
+      needPageReset = false
+      return
+    }
+
+    needPageReset = false
+
+    await loadData(
+      requestParams.value,
+      getRequestQuery(page.value, itemsPerPage.value, additionalQuery.value),
+    )
+  })
 
   const getRequestQuery = (
     page: number,
@@ -43,33 +55,28 @@ export const usePaginatedListData = <T>(
     }
   }
 
-  const loadData = async (
-    page: number,
-    itemsPerPage: number,
-    requestParams: RequestParams,
-    additionalQuery: RequestQuery,
-  ) => {
+  const loadData = async (params: RequestParams, query: RequestQuery) => {
     if (loading.value) return
+
     loading.value = true
-    let response = await sendRequest<PaginatedResponse<T>>(
-      url,
-      {},
-      requestParams,
-      getRequestQuery(page, itemsPerPage, additionalQuery),
-    )
+
+    let response = await sendRequest<PaginatedResponse<T>>(url, {}, params, query)
+
     if (!response.isSuccess) {
       error.value = 'Непредвиденная ошибка загрузки списка'
       loading.value = false
       return
     }
 
+    error.value = ''
     items.value = response.data.data
     count.value = response.data.count
     loading.value = false
   }
 
+  const getItems = readonly(items)
   const getCount = readonly(count)
-  const getError = readonly(count)
+  const getError = readonly(error)
   const getLoading = readonly(loading)
 
   const setPage = (value: number) => {
@@ -82,41 +89,47 @@ export const usePaginatedListData = <T>(
     itemsPerPage.value = value
   }
 
+  const withPageReset = (fn: () => void): void => {
+    fn()
+    needPageReset = true
+  }
+
   const setRequestParams = (value: RequestParams) => {
-    requestParams.value = value
+    withPageReset(() => (requestParams.value = { ...value }))
   }
 
   const setAdditionalQueryParams = (value: RequestQuery) => {
-    additionalQuery.value = value
+    withPageReset(() => (additionalQuery.value = { ...value }))
   }
 
   const setRequestParam = (key: string, value: RequestParamValue) => {
-    requestParams.value[key] = value
+    withPageReset(() => (requestParams.value[key] = value))
   }
 
   const deleteRequestParam = (key: string) => {
-    delete requestParams.value[key]
+    withPageReset(() => delete requestParams.value[key])
   }
 
   const setAdditionalQueryParam = (key: string, value: RequestQueryValue) => {
-    additionalQuery.value[key] = value
+    withPageReset(() => (additionalQuery.value[key] = value))
   }
 
   const deleteAdditionalQueryParam = (key: string) => {
-    delete additionalQuery.value[key]
+    withPageReset(() => delete additionalQuery.value[key])
   }
 
   const clearRequestParams = () => {
-    requestParams.value = {}
+    withPageReset(() => (requestParams.value = {}))
   }
 
   const clearAdditionalQueryParams = () => {
-    additionalQuery.value = {}
+    withPageReset(() => (additionalQuery.value = {}))
   }
 
   return {
     page,
     itemsPerPage,
+    getItems,
     getCount,
     getError,
     getLoading,
