@@ -1,4 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useWorldsListStore } from '@/stores/worlds/list.ts'
+import { storeToRefs } from 'pinia'
+
+const store = useWorldsListStore()
+const {} = storeToRefs(store)
+</script>
 
 <template>
   <v-row no-gutters class="pa-5">
