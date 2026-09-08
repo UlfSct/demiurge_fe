@@ -119,6 +119,30 @@
   }
 }
 
+@for $i from 1 through 50 {
+  .font-size-#{$i} {
+    font-size: #{$i}px !important;
+  }
+}
+
+@for $i from 1 through 200 {
+  .w-#{$i}px {
+    width: #{$i}px !important;
+  }
+}
+
+@for $i from 1 through 200 {
+  .h-#{$i}px {
+    height: #{$i}px !important;
+  }
+}
+
+@for $i from 1 through 10 {
+  .ls-#{$i}px {
+    letter-spacing: #{$i}px !important;
+  }
+}
+
 .default-scrollbar {
   scrollbar-width: auto !important;
   scrollbar-color: var(--gold-accent) var(--brown-secondary) !important;
@@ -424,7 +448,6 @@ body {
     margin: 0!important;
   }
 
-  /* Вариант с иконкой слева */
   &--with-icon {
     display: flex;
     align-items: center;
@@ -516,6 +539,7 @@ body {
     border-radius: 0 !important;
     width: 30px !important;
     height: 30px !important;
+    min-width: unset !important;
 
     &--no-shadow {
       background: var(--gradient-gold) !important;

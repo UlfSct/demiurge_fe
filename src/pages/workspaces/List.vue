@@ -1,7 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import UnderConstruction from '@/components/core/UnderConstruction.vue'
+</script>
 
 <template>
-  <div>Список раб пространств</div>
+  <under-construction />
 </template>
 
 <style scoped></style>

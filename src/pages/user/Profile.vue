@@ -7,6 +7,7 @@ import ChangePasswordDialog from '@/components/profile/ChangePasswordDialog.vue'
 import EditProfileDialog from '@/components/profile/EditProfileDialog.vue'
 import EditProfileAvatarDialog from '@/components/profile/EditProfileAvatarDialog.vue'
 import { ref } from 'vue'
+import IconButton from '@/components/ui/IconButton.vue'
 
 const userStore = useUserStore()
 const { getProfile } = storeToRefs(userStore)
@@ -105,9 +106,9 @@ const closeChangePasswordDialog = () => {
             {{ getUsernameSubtitleText() }}
           </v-card-text>
           <v-row no-gutters class="d-flex ga-3">
-            <v-btn icon="edit" class="form-btn__icon" @click="openEditDialog" />
-            <v-btn icon="photo" class="form-btn__icon" @click="openEditAvatarDialog" />
-            <v-btn icon="lock_reset" class="form-btn__icon" @click="openChangePasswordDialog" />
+            <icon-button icon="edit" @click="openEditDialog" />
+            <icon-button icon="photo" @click="openEditAvatarDialog" />
+            <icon-button icon="lock_reset" @click="openChangePasswordDialog" />
           </v-row>
         </v-col>
         <v-row no-gutters class="ga-3">
