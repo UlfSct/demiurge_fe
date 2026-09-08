@@ -3,32 +3,41 @@ import { usePaginatedListData } from '@/composables/usePaginatedListData.ts'
 import type { UrlEntry } from '@/types/urls.ts'
 import type { Ref } from 'vue'
 
-export type BasePaginatedStore<T> = {
+type BasePaginatedStore<T> = {
   getItems: Ref<T[]>
   getCount: Ref<number>
+  getItemsPerPage: Ref<number>
   getLoading: Ref<boolean>
+  getPage: Ref<number>
   getError: Ref<string | null>
   setPage: (page: number) => void
   setItemsPerPage: (count: number) => void
 }
 
-type PaginatedListStoreOptions<T, E extends Record<string, any> = {}> = {
+type PaginatedListStoreOptions = {
   storeId: string
   listUrl: UrlEntry
-  extendSetup?: (baseStore: BasePaginatedStore<T>) => E
 }
 
-export function createPaginatedListStore<T, E extends Record<string, any> = {}>(
-  options: PaginatedListStoreOptions<T, E>,
-) {
-  const { storeId, listUrl, extendSetup } = options
+export function createPaginatedListStore<T>(options: PaginatedListStoreOptions) {
+  const { storeId, listUrl } = options
 
   return defineStore(storeId, () => {
-    const { getItems, getCount, getLoading, getError, setPage, setItemsPerPage } =
-      usePaginatedListData<T>(listUrl)
+    const {
+      getItems,
+      getCount,
+      getLoading,
+      getError,
+      getItemsPerPage,
+      getPage,
+      setPage,
+      setItemsPerPage,
+    } = usePaginatedListData<T>(listUrl)
 
     const baseStore: BasePaginatedStore<T> = {
       getItems,
+      getItemsPerPage,
+      getPage,
       getCount,
       getLoading,
       getError,
@@ -36,11 +45,8 @@ export function createPaginatedListStore<T, E extends Record<string, any> = {}>(
       setItemsPerPage,
     }
 
-    const extendedStore = extendSetup ? extendSetup(baseStore) : ({} as E)
-
     return {
       ...baseStore,
-      ...extendedStore,
     }
   })
 }

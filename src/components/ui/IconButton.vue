@@ -5,15 +5,17 @@ const emit = defineEmits<{
 
 interface IProps {
   icon: string
+  readonly?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   icon: 'add',
+  readonly: false,
 })
 </script>
 
 <template>
-  <v-btn class="form-btn__icon px-0" @click="emit('click')">
+  <v-btn class="form-btn__icon px-0" :readonly="props.readonly" @click="emit('click')">
     <v-icon>{{ props.icon }}</v-icon>
   </v-btn>
 </template>

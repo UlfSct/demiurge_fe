@@ -42,12 +42,12 @@ const showAfterPageEllipsis = (value: number): boolean => {
 </script>
 
 <template>
-  <v-card class="default-card px-5 py-4 w-100">
+  <v-card class="default-card px-5 py-4 w-100 mt-2" v-if="props.count > 0">
     <v-row no-gutters class="ga-2 justify-center text-center">
       <template v-for="i in getMaxPages">
         <pagination-footer-page
           v-if="showPageNumber(i)"
-          :selected="i === page"
+          :selected="i === props.page"
           :page="i"
           :key="`pagination-footer-page-${i}`"
           @set-page="setPage"

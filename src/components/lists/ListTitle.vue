@@ -8,11 +8,13 @@ const emit = defineEmits<{
 interface IProps {
   title: string
   showAddButton?: boolean
+  loading?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   title: 'Заголовок',
   showAddButton: true,
+  loading: false,
 })
 </script>
 
@@ -26,7 +28,12 @@ const props = withDefaults(defineProps<IProps>(), {
       </v-col>
       <v-col cols="auto" class="flex-shrink-0 pl-3">
         <slot name="btn-left"></slot>
-        <icon-button icon="add" v-if="props.showAddButton" @click="emit('add')" />
+        <icon-button
+          icon="add"
+          v-if="props.showAddButton"
+          :readonly="props.loading"
+          @click="emit('add')"
+        />
         <slot name="btn-right"></slot>
       </v-col>
     </v-row>

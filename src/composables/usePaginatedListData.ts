@@ -8,11 +8,12 @@ import type {
   RequestQueryValue,
 } from '@/types/requests.ts'
 import { executeWithMinDuration, sendRequest } from '@/utils/requests.ts'
+import { ITEMS_PER_PAGE_SELECTOR_ITEMS } from '@/utils/consts.ts'
 
 export interface PaginatedListData<T> {
-  page: Ref<number>
-  itemsPerPage: Ref<number>
   getItems: ComputedRef<T[]>
+  getPage: ComputedRef<number>
+  getItemsPerPage: ComputedRef<number>
   getCount: ComputedRef<number>
   getError: ComputedRef<string>
   getLoading: ComputedRef<boolean>
@@ -37,7 +38,7 @@ export const usePaginatedListData = <T>(
 ): PaginatedListData<T> => {
   const items = shallowRef<T[]>([])
   const page = ref<number>(1)
-  const itemsPerPage = ref<number>(25)
+  const itemsPerPage = ref<number>(Number(ITEMS_PER_PAGE_SELECTOR_ITEMS[0]))
   const count = ref<number>(0)
   const loading = ref<boolean>(false)
   const error = ref<string>('')
@@ -98,6 +99,8 @@ export const usePaginatedListData = <T>(
   const getCount = computed(() => count.value)
   const getError = computed(() => error.value)
   const getLoading = computed(() => loading.value)
+  const getItemsPerPage = computed(() => itemsPerPage.value)
+  const getPage = computed(() => page.value)
 
   const setPage = (value: number) => {
     if (value <= 0) value = 1
@@ -147,8 +150,8 @@ export const usePaginatedListData = <T>(
   }
 
   return {
-    page,
-    itemsPerPage,
+    getPage,
+    getItemsPerPage,
     getItems,
     getCount,
     getError,

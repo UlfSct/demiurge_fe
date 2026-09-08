@@ -4,7 +4,7 @@ export const ALLOWED_FILE_MIME_TYPES = [
   'image/jpeg',
   'image/pjpeg',
   'image/gif',
-  'image/jpeg',
+  'image/jpg',
   'image/png',
 ]
 
@@ -23,3 +23,5 @@ export enum HTTP_METHODS {
   OPTIONS = 'OPTIONS',
   HEAD = 'HEAD',
 }
+
+export const ITEMS_PER_PAGE_SELECTOR_ITEMS = [12, 24, 48, 96]

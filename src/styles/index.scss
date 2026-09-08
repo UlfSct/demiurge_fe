@@ -113,9 +113,15 @@
   --spacing-lg: 24px;
 }
 
-@for $i from 1 through 20 {
-  .max-width-#{$i * 50} {
-    max-width: #{$i * 50}px !important;
+@for $i from 1 through 100 {
+  .max-width-#{$i * 10} {
+    max-width: #{$i * 10}px !important;
+  }
+}
+
+@for $i from 1 through 100 {
+  .min-width-#{$i * 10} {
+    min-width: #{$i * 10}px !important;
   }
 }
 
@@ -125,7 +131,7 @@
   }
 }
 
-@for $i from 1 through 200 {
+@for $i from 1 through 300 {
   .w-#{$i}px {
     width: #{$i}px !important;
   }
