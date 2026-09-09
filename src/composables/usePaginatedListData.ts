@@ -1,4 +1,4 @@
-import { computed, type ComputedRef, type Ref, ref, shallowRef, watch } from 'vue'
+import { computed, type ComputedRef, ref, shallowRef, watch } from 'vue'
 import type { UrlEntry } from '@/types/urls.ts'
 import type {
   PaginatedResponse,
@@ -74,7 +74,7 @@ export const usePaginatedListData = <T>(
       }
 
       error.value = ''
-      items.value = response.data.data
+      items.value = response.data.results
       count.value = response.data.count
       loading.value = false
     })

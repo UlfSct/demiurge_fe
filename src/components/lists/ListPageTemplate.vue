@@ -4,7 +4,7 @@ import PaginationFooter from '@/components/lists/PaginationFooter.vue'
 import ListHeader from '@/components/lists/ListHeader.vue'
 
 const emit = defineEmits<{
-  add: []
+  create: []
 }>()
 
 interface IPaginatedStore {
@@ -33,7 +33,7 @@ const changeItemsPerPageValue = (value: number) => {
 
 <template>
   <v-row no-gutters class="pa-5">
-    <list-title title="Доступные миры" :loading="props.store.getLoading" @add="emit('add')" />
+    <list-title title="Доступные миры" :loading="props.store.getLoading" @add="emit('create')" />
     <list-header
       :loading="props.store.getLoading"
       @change-items-per-page-value="changeItemsPerPageValue"

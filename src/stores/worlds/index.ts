@@ -1,6 +1,10 @@
 import { urls } from '@/urls'
 import type { NumberSelectorItem } from '@/types/utils.ts'
-import { createBaseActionStore, createPaginatedListStore } from '@/utils/store.ts'
+import {
+  createBaseActionStore,
+  createBaseDetailStore,
+  createPaginatedListStore,
+} from '@/utils/store.ts'
 
 export type WorldsListItem = {
   id: number
@@ -14,12 +18,35 @@ export type WorldsListItem = {
   article: number | null
 }
 
+export type WorldDetail = {
+  id: number
+  demiurge: string
+  authors: NumberSelectorItem[]
+  is_demiurge: boolean
+  is_author: boolean
+  name: string
+  caption: string
+  is_public: boolean
+  article: number | null
+}
+
+export type WorldsCreateRequestData = {
+  name: string
+  caption: string
+  is_public: boolean
+}
+
 export const useWorldsListStore = createPaginatedListStore<WorldsListItem>({
   storeId: 'worldsList',
   url: urls.WORLDS.LIST,
 })
 
-export const useWorldsCreateStore = createBaseActionStore({
+export const useWorldsDetailStore = createBaseDetailStore<WorldDetail>({
+  storeId: 'worldsDetail',
+  url: urls.WORLDS.DETAIL.GET,
+})
+
+export const useWorldsCreateStore = createBaseActionStore<WorldsCreateRequestData>({
   storeId: 'worldsCreate',
   url: urls.WORLDS.CREATE,
 })

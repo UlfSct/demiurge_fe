@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { usePaginatedListData } from '@/composables/usePaginatedListData.ts'
 import type { UrlEntry } from '@/types/urls.ts'
-import { readonly, ref, type Ref } from 'vue'
-import type { PaginatedResponse, RequestParams, RequestQuery } from '@/types/requests.ts'
+import { computed, readonly, ref, type Ref } from 'vue'
+import type { RequestParams, RequestQuery } from '@/types/requests.ts'
 import { executeWithMinDuration, sendRequest } from '@/utils/requests.ts'
 
 type BasePaginatedStore<T> = {
@@ -16,9 +16,15 @@ type BasePaginatedStore<T> = {
   setItemsPerPage: (count: number) => void
 }
 
-type BaseActionStore<TData extends object, TReturn extends object> = {
+type BaseActionStore<TData extends object> = {
   getLoading: Ref<boolean>
-  execute: (data: TData, params: RequestParams, query: RequestQuery) => Promise<void>
+  execute: (data: TData, params?: RequestParams, query?: RequestQuery) => Promise<void>
+}
+
+type BaseDetailStore<TData extends object> = {
+  getLoading: Ref<boolean>
+  getItem: Ref<TData | null>
+  execute: (data: {}, params?: RequestParams, query?: RequestQuery) => Promise<void>
 }
 
 type StoreOptions = {
@@ -58,9 +64,49 @@ export function createPaginatedListStore<T extends object>(options: StoreOptions
   })
 }
 
-export function createBaseActionStore<TData extends object, TReturn extends object>(
-  options: StoreOptions,
-) {
+export function createBaseDetailStore<T extends object>(options: StoreOptions) {
+  const { storeId, url } = options
+
+  return defineStore(storeId, () => {
+    const loading = ref<boolean>(false)
+    const item = ref<T | null>(null)
+    const getLoading = readonly(loading)
+    const getItem = computed(() => item.value)
+
+    const execute = async (
+      data: {} = {},
+      params: RequestParams = {},
+      query: RequestQuery = {},
+    ): Promise<void> => {
+      if (loading.value) return
+
+      loading.value = true
+      try {
+        await executeWithMinDuration(async () => {
+          let response = await sendRequest<T>(url, data, params, query)
+          if (!response.isSuccess) throw response.data
+          item.value = response.data
+        })
+      } catch (error) {
+        loading.value = false
+        throw error
+      }
+      loading.value = false
+    }
+
+    const baseStore: BaseDetailStore<T> = {
+      getLoading,
+      getItem,
+      execute,
+    }
+
+    return {
+      ...baseStore,
+    }
+  })
+}
+
+export function createBaseActionStore<TData extends object>(options: StoreOptions) {
   const { storeId, url } = options
 
   return defineStore(storeId, () => {
@@ -68,21 +114,28 @@ export function createBaseActionStore<TData extends object, TReturn extends obje
     const getLoading = readonly(loading)
 
     const execute = async (
-      data: TData,
-      params: RequestParams,
-      query: RequestQuery,
+      data: TData = {} as TData,
+      params: RequestParams = {},
+      query: RequestQuery = {},
     ): Promise<void> => {
       if (loading.value) return
 
       loading.value = true
-      await executeWithMinDuration(async () => {
-        let response = await sendRequest<PaginatedResponse<TReturn>>(url, data, params, query)
-        if (!response.isSuccess) throw response.data
+      try {
+        await executeWithMinDuration(async () => {
+          let response = await sendRequest<unknown>(url, data, params, query)
+          if (!response.isSuccess) {
+            throw response.data
+          }
+        })
+      } catch (error) {
         loading.value = false
-      })
+        throw error
+      }
+      loading.value = false
     }
 
-    const baseStore: BaseActionStore<TData, TReturn> = {
+    const baseStore: BaseActionStore<TData> = {
       getLoading,
       execute,
     }

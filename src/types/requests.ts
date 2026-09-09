@@ -24,7 +24,7 @@ export interface IErrorResponse {
 export type RequestResponse<T> = ISuccessResponse<T> | IErrorResponse
 
 export type PaginatedResponse<T> = {
-  data: T[]
+  results: T[]
   next: string | null
   previous: string | null
   count: number

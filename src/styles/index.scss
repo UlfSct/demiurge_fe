@@ -107,6 +107,8 @@
   --border-radius-sm: 2px;
   --border-radius-md: 4px;
   --border-radius-lg: 8px;
+  --spacing-xxxs: 1px;
+  --spacing-xxs: 2px;
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
@@ -616,8 +618,25 @@ body {
     font-size: var(--font-size-small);
     text-shadow: 0 0 8px rgba(var(--red-accent-rgb), 0.3);
   }
-}
 
+  &__checkbox {
+    .v-label {
+      margin-left: var(--spacing-xs);
+      margin-top: var(--spacing-xxxs);
+      font-size: calc(var(--font-size-body) + 2px) !important;
+    }
+
+    .v-selection-control--dirty {
+      .v-label {
+        color: var(--gold-light) !important;
+      }
+
+      .v-icon {
+        color: var(--gold-light) !important;
+      }
+    }
+  }
+}
 .form-footer-text {
   color: var(--color-text-muted);
   font-family: var(--font-primary), serif;
