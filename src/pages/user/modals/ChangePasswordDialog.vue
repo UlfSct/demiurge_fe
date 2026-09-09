@@ -5,6 +5,8 @@ import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { type ChangePasswordRequestPayloadData, useUserStore } from '@/stores/core/user.ts'
 import type { RequestErrorObject } from '@/types/requests.ts'
+import TextField from '@/components/ui/fields/TextField.vue'
+import TextFieldWithVisibility from '@/components/ui/fields/TextFieldWithVisibility.vue'
 
 type ChangePasswordFormData = {
   new_password: string
@@ -25,21 +27,8 @@ const formData = ref<ChangePasswordFormData>({
   old_password: '',
 })
 
-const showOldPassword = ref(false)
-const showNewPassword = ref(false)
-
 const close = (): void => {
   emit('close')
-}
-
-const toggleOldPasswordVisibility = () => {
-  if (getIsLoadingChangePassword.value) return
-  showOldPassword.value = !showOldPassword.value
-}
-
-const toggleNewPasswordVisibility = () => {
-  if (getIsLoadingChangePassword.value) return
-  showNewPassword.value = !showNewPassword.value
 }
 
 const validateFormData = () => {
@@ -88,51 +77,27 @@ const onCloseHandler = (applied: boolean): void => {
     :loading="getIsLoadingChangePassword"
     @close="onCloseHandler"
   >
-    <v-text-field autocomplete="=username" class="d-none" />
-    <v-text-field
+    <text-field autocomplete="username" class="d-none" />
+    <text-field-with-visibility
       v-model="formData.old_password"
-      :type="showOldPassword ? 'text' : 'password'"
-      density="comfortable"
-      variant="solo"
       label="Старый пароль"
       autocomplete="current-password"
+      :required="true"
       :readonly="getIsLoadingChangePassword"
       :error="hasError('old_password')"
       :error-messages="getError('old_password')"
       @input="clearError('old_password')"
-      class="form-input mb-1 w-100 password-input"
-    >
-      <template #append-inner>
-        <v-btn
-          :icon="showOldPassword ? 'visibility' : 'visibility_off'"
-          class="form-btn__icon--no-shadow"
-          :readonly="getIsLoadingChangePassword"
-          @click="toggleOldPasswordVisibility"
-        />
-      </template>
-    </v-text-field>
-    <v-text-field
+    />
+    <text-field-with-visibility
       v-model="formData.new_password"
-      :type="showNewPassword ? 'text' : 'password'"
-      density="comfortable"
-      variant="solo"
       label="Новый пароль"
       autocomplete="new-password"
+      :required="true"
       :readonly="getIsLoadingChangePassword"
       :error="hasError('new_password')"
       :error-messages="getError('new_password')"
       @input="clearError('new_password')"
-      class="form-input mb-1 w-100 password-input"
-    >
-      <template #append-inner>
-        <v-btn
-          :icon="showNewPassword ? 'visibility' : 'visibility_off'"
-          class="form-btn__icon--no-shadow"
-          :readonly="getIsLoadingChangePassword"
-          @click="toggleNewPasswordVisibility"
-        />
-      </template>
-    </v-text-field>
+    />
   </form-dialog>
 </template>
 

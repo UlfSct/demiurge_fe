@@ -3,11 +3,11 @@ import { useUserStore } from '@/stores/core/user.ts'
 import { storeToRefs } from 'pinia'
 import { displayDate, displayDateWithTime } from '@/utils/date.ts'
 import UserAvatar from '@/components/core/UserAvatar.vue'
-import ChangePasswordDialog from '@/components/profile/ChangePasswordDialog.vue'
-import EditProfileDialog from '@/components/profile/EditProfileDialog.vue'
-import EditProfileAvatarDialog from '@/components/profile/EditProfileAvatarDialog.vue'
+import ChangePasswordDialog from '@/pages/user/modals/ChangePasswordDialog.vue'
+import EditProfileDialog from '@/pages/user/modals/EditProfileDialog.vue'
+import EditProfileAvatarDialog from '@/pages/user/modals/EditProfileAvatarDialog.vue'
 import { ref } from 'vue'
-import IconButton from '@/components/ui/IconButton.vue'
+import IconButton from '@/components/ui/buttons/IconButton.vue'
 
 const userStore = useUserStore()
 const { getProfile } = storeToRefs(userStore)

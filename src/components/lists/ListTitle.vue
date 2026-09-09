@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import IconButton from '@/components/ui/IconButton.vue'
+import IconButton from '@/components/ui/buttons/IconButton.vue'
 
 const emit = defineEmits<{
   add: []

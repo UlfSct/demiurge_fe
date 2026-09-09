@@ -6,6 +6,8 @@ import { onMounted, ref } from 'vue'
 import { useFormErrors } from '@/composables/useFormErrors.ts'
 import type { RequestErrorObject } from '@/types/requests.ts'
 import { storeToRefs } from 'pinia'
+import TextField from '@/components/ui/fields/TextField.vue'
+import TextFieldWithVisibility from '@/components/ui/fields/TextFieldWithVisibility.vue'
 
 type RegistrationFormData = {
   username: string | null
@@ -31,9 +33,6 @@ const formData = ref<RegistrationFormData>({
   last_name: null,
 })
 
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
-
 const goToLogin = () => {
   if (getIsLoadingRegister.value) return
   router.push({ name: routerNames.LOGIN })
@@ -42,16 +41,6 @@ const goToLogin = () => {
 const goToMain = () => {
   if (getIsLoadingRegister.value) return
   router.push({ name: routerNames.MAIN })
-}
-
-const togglePasswordVisibility = () => {
-  if (getIsLoadingRegister.value) return
-  showPassword.value = !showPassword.value
-}
-
-const toggleConfirmPasswordVisibility = () => {
-  if (getIsLoadingRegister.value) return
-  showConfirmPassword.value = !showConfirmPassword.value
 }
 
 const onInputPassword = () => {
@@ -105,110 +94,75 @@ onMounted(() => {
   <v-row no-gutters class="fill-height justify-center align-content-center no-auth-bg">
     <v-col cols="4" class="justify-items-center">
       <v-card class="default-card pa-6" max-width="420" min-width="380">
-        <v-form @submit.prevent="register">
-          <v-text-field
+        <v-form @submit.prevent>
+          <text-field
             v-model="formData.username"
-            density="comfortable"
-            variant="solo"
+            label="Логин"
+            :required="true"
             autocomplete="username"
             :readonly="getIsLoadingRegister"
             :error="hasError('username')"
             :error-messages="getError('username')"
             @input="clearError('username')"
-            class="form-input mb-1"
-          >
-            <template #label>Логин<span class="color--red">*</span></template>
-          </v-text-field>
-          <v-text-field
+          />
+          <text-field
             v-model="formData.email"
-            density="comfortable"
-            variant="solo"
+            label="E-mail"
+            :required="true"
             autocomplete="username"
             :readonly="getIsLoadingRegister"
             :error="hasError('email')"
             :error-messages="getError('email')"
             @input="clearError('email')"
-            class="form-input mb-1"
-          >
-            <template #label>E-mail<span class="color--red">*</span></template>
-          </v-text-field>
-          <v-text-field
+          />
+          <text-field-with-visibility
             v-model="formData.password"
-            :type="showPassword ? 'text' : 'password'"
-            density="comfortable"
-            variant="solo"
+            label="Пароль"
+            :required="true"
             autocomplete="new-password"
             :readonly="getIsLoadingRegister"
             :error="hasError('password')"
             :error-messages="getError('password')"
             @input="onInputPassword"
-            class="form-input mb-1 password-input"
-          >
-            <template #label>Пароль<span class="color--red">*</span></template>
-            <template #append-inner>
-              <v-btn
-                :icon="showPassword ? 'visibility' : 'visibility_off'"
-                class="form-btn__icon--no-shadow"
-                :readonly="getIsLoadingRegister"
-                @click="togglePasswordVisibility"
-              />
-            </template>
-          </v-text-field>
-          <v-text-field
+          />
+          <text-field-with-visibility
             v-model="formData.confirm_password"
-            :type="showConfirmPassword ? 'text' : 'password'"
-            density="comfortable"
-            variant="solo"
+            label="Подтвердите пароль"
+            :required="true"
             autocomplete="new-password"
             :readonly="getIsLoadingRegister"
             :error="hasError('confirm_password')"
             :error-messages="getError('confirm_password')"
             @input="clearError('confirm_password')"
-            class="form-input mb-1 password-input"
-          >
-            <template #label>Подтвердите пароль<span class="color--red">*</span></template>
-            <template #append-inner>
-              <v-btn
-                :icon="showConfirmPassword ? 'visibility' : 'visibility_off'"
-                class="form-btn__icon--no-shadow"
-                :readonly="getIsLoadingRegister"
-                @click="toggleConfirmPasswordVisibility"
-              />
-            </template>
-          </v-text-field>
-          <v-text-field
+          />
+          <text-field
             v-model="formData.first_name"
-            density="comfortable"
-            variant="solo"
             label="Имя"
             autocomplete="given-name"
             :readonly="getIsLoadingRegister"
             :error="hasError('first_name')"
             :error-messages="getError('first_name')"
             @input="clearError('first_name')"
-            class="form-input mb-1"
           />
-          <v-text-field
+          <text-field
             v-model="formData.last_name"
-            density="comfortable"
-            variant="solo"
             label="Фамилия"
             autocomplete="family-name"
             :readonly="getIsLoadingRegister"
             :error="hasError('last_name')"
             :error-messages="getError('last_name')"
             @input="clearError('last_name')"
-            class="form-input mb-1"
           />
+          <v-btn
+            type="submit"
+            class="form-btn w-100 mt-2"
+            size="large"
+            @click="register"
+            :loading="getIsLoadingRegister"
+          >
+            Зарегистрироваться
+          </v-btn>
         </v-form>
-        <v-btn
-          class="form-btn w-100 mt-2"
-          size="large"
-          @click="register"
-          :loading="getIsLoadingRegister"
-        >
-          Зарегистрироваться
-        </v-btn>
         <v-card-text class="text-center mt-4 py-0">
           <span class="form-footer-text">
             Есть аккаунт?

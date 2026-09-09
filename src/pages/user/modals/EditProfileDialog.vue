@@ -5,6 +5,7 @@ import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/core/user.ts'
 import type { RequestErrorObject } from '@/types/requests.ts'
+import TextField from '@/components/ui/fields/TextField.vue'
 
 type EditProfileFormData = {
   username: string | null
@@ -74,41 +75,33 @@ const onCloseHandler = (applied: boolean): void => {
     :loading="getIsLoadingEditProfile"
     @close="onCloseHandler"
   >
-    <v-text-field
+    <text-field
       v-model="formData.username"
-      density="comfortable"
-      variant="solo"
       label="Логин"
       autocomplete="username"
+      :required="true"
       :readonly="getIsLoadingEditProfile"
       :error="hasError('username')"
       :error-messages="getError('username')"
       @input="clearError('username')"
-      class="form-input mb-1 w-100"
     />
-    <v-text-field
+    <text-field
       v-model="formData.first_name"
-      density="comfortable"
-      variant="solo"
       label="Имя"
       autocomplete="given-name"
       :readonly="getIsLoadingEditProfile"
       :error="hasError('first_name')"
       :error-messages="getError('first_name')"
       @input="clearError('first_name')"
-      class="form-input mb-1 w-100"
     />
-    <v-text-field
+    <text-field
       v-model="formData.last_name"
-      density="comfortable"
-      variant="solo"
       label="Фамилия"
       autocomplete="family-name"
       :readonly="getIsLoadingEditProfile"
       :error="hasError('last_name')"
       :error-messages="getError('last_name')"
       @input="clearError('last_name')"
-      class="form-input mb-1 w-100"
     />
   </form-dialog>
 </template>
