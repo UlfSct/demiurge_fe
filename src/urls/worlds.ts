@@ -11,13 +11,13 @@ const worldsUrls = {
   },
   DETAIL: {
     AUTHOR: {
-      UPDATE: {
+      EDIT: {
         path: '/author/world/{id}/',
         method: HTTP_METHODS.PATCH,
       },
     },
     DEMIURGE: {
-      UPDATE: {
+      EDIT: {
         path: '/demiurge/world/{id}/',
         method: HTTP_METHODS.PATCH,
       },

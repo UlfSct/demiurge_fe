@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
 import { usePaginatedListData } from '@/composables/usePaginatedListData.ts'
 import type { UrlEntry } from '@/types/urls.ts'
-import type { Ref } from 'vue'
+import { readonly, ref, type Ref } from 'vue'
+import type { PaginatedResponse, RequestParams, RequestQuery } from '@/types/requests.ts'
+import { executeWithMinDuration, sendRequest } from '@/utils/requests.ts'
 
 type BasePaginatedStore<T> = {
   getItems: Ref<T[]>
@@ -14,13 +16,18 @@ type BasePaginatedStore<T> = {
   setItemsPerPage: (count: number) => void
 }
 
-type PaginatedListStoreOptions = {
-  storeId: string
-  listUrl: UrlEntry
+type BaseActionStore<TData extends object, TReturn extends object> = {
+  getLoading: Ref<boolean>
+  execute: (data: TData, params: RequestParams, query: RequestQuery) => Promise<void>
 }
 
-export function createPaginatedListStore<T>(options: PaginatedListStoreOptions) {
-  const { storeId, listUrl } = options
+type StoreOptions = {
+  storeId: string
+  url: UrlEntry
+}
+
+export function createPaginatedListStore<T extends object>(options: StoreOptions) {
+  const { storeId, url } = options
 
   return defineStore(storeId, () => {
     const {
@@ -32,7 +39,7 @@ export function createPaginatedListStore<T>(options: PaginatedListStoreOptions) 
       getPage,
       setPage,
       setItemsPerPage,
-    } = usePaginatedListData<T>(listUrl)
+    } = usePaginatedListData<T>(url)
 
     const baseStore: BasePaginatedStore<T> = {
       getItems,
@@ -43,6 +50,41 @@ export function createPaginatedListStore<T>(options: PaginatedListStoreOptions) 
       getError,
       setPage,
       setItemsPerPage,
+    }
+
+    return {
+      ...baseStore,
+    }
+  })
+}
+
+export function createBaseActionStore<TData extends object, TReturn extends object>(
+  options: StoreOptions,
+) {
+  const { storeId, url } = options
+
+  return defineStore(storeId, () => {
+    const loading = ref<boolean>(false)
+    const getLoading = readonly(loading)
+
+    const execute = async (
+      data: TData,
+      params: RequestParams,
+      query: RequestQuery,
+    ): Promise<void> => {
+      if (loading.value) return
+
+      loading.value = true
+      await executeWithMinDuration(async () => {
+        let response = await sendRequest<PaginatedResponse<TReturn>>(url, data, params, query)
+        if (!response.isSuccess) throw response.data
+        loading.value = false
+      })
+    }
+
+    const baseStore: BaseActionStore<TData, TReturn> = {
+      getLoading,
+      execute,
     }
 
     return {
