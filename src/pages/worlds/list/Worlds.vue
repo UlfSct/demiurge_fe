@@ -32,10 +32,12 @@ const getColClass = (index: number): string => {
 
   const needLeftPadding = (): boolean => index % itemsPerRow !== 0
   const needRightPadding = (): boolean => index % itemsPerRow !== itemsPerRow - 1
+  const needTopPadding = (): boolean => index % itemsPerRow !== index
 
   let classStr = ''
   if (needLeftPadding()) classStr += ` pl-2`
   if (needRightPadding()) classStr += ` pr-2`
+  if (needTopPadding()) classStr += ` pt-2`
   return classStr
 }
 
