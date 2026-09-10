@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import routerNames from '@/router/names.ts'
-import MainRouterCard, { type IMainRouterCard } from '@/components/core/MainRouterCard.vue'
+import MainRouterCard, { type IMainRouterCard } from '@/pages/main/MainRouterCard.vue'
 import worlds from '@/assets/main/worlds.png'
 import characters from '@/assets/main/characters.png'
 import workspaces from '@/assets/main/workspaces.png'

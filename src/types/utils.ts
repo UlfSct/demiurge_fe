@@ -5,6 +5,20 @@ export type FileObject = {
   url: string
 }
 
+export type FileDetail = {
+  id: number
+  file: FileObject
+  help_text: string | null
+  is_image: boolean
+}
+
+export type WorldArticle = {
+  id: number
+  title: string
+  article_text: string
+  is_visible: boolean
+}
+
 export type SelectorItem<T> = {
   text: string
   value: T

@@ -5,9 +5,47 @@ import Registration from '@/pages/user/Registration.vue'
 import Login from '@/pages/user/Login.vue'
 import Profile from '@/pages/user/Profile.vue'
 import WorldsList from '@/pages/worlds/list/Page.vue'
+import WorldsDetail from '@/pages/worlds/detail/index/Page.vue'
 import CharactersList from '@/pages/characters/List.vue'
 import WorkspacesList from '@/pages/workspaces/List.vue'
 import PartiesList from '@/pages/parties/List.vue'
+
+const worldsRoutes: RouteRecordRaw[] = [
+  {
+    name: String(routerNames.WORlDS.LIST),
+    path: '/worlds',
+    component: WorldsList,
+  },
+  {
+    name: String(routerNames.WORlDS.DETAIL.INDEX),
+    path: '/worlds/:id',
+    component: WorldsDetail,
+  },
+]
+
+const charactersRoutes: RouteRecordRaw[] = [
+  {
+    name: String(routerNames.CHARACTERS.LIST),
+    path: '/characters',
+    component: CharactersList,
+  },
+]
+
+const workspacesRoutes: RouteRecordRaw[] = [
+  {
+    name: String(routerNames.WORKSPACES.LIST),
+    path: '/workspaces',
+    component: WorkspacesList,
+  },
+]
+
+const partiesRoutes: RouteRecordRaw[] = [
+  {
+    name: String(routerNames.PARTIES.LIST),
+    path: '/parties',
+    component: PartiesList,
+  },
+]
 
 const APP_ROUTES: RouteRecordRaw[] = [
   {
@@ -30,26 +68,10 @@ const APP_ROUTES: RouteRecordRaw[] = [
     path: '/profile',
     component: Profile,
   },
-  {
-    name: String(routerNames.WORlDS.LIST),
-    path: '/worlds',
-    component: WorldsList,
-  },
-  {
-    name: String(routerNames.CHARACTERS.LIST),
-    path: '/characters',
-    component: CharactersList,
-  },
-  {
-    name: String(routerNames.WORKSPACES.LIST),
-    path: '/workspaces',
-    component: WorkspacesList,
-  },
-  {
-    name: String(routerNames.PARTIES.LIST),
-    path: '/parties',
-    component: PartiesList,
-  },
+  ...worldsRoutes,
+  ...charactersRoutes,
+  ...workspacesRoutes,
+  ...partiesRoutes,
 ]
 
 export default APP_ROUTES

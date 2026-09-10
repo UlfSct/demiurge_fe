@@ -5,15 +5,15 @@ import { ref } from 'vue'
 import WorldCreateDialog from '@/pages/worlds/list/modals/WorldCreateDialog.vue'
 import WorldDeleteDialog from '@/pages/worlds/list/modals/WorldDeleteDialog.vue'
 import { storeToRefs } from 'pinia'
-import WorldAuthorEditDialog from '@/pages/worlds/list/modals/WorldAuthorEditDialog.vue'
-import WorldDemiurgeEditDialog from '@/pages/worlds/list/modals/WorldDemiurgeEditDialog.vue'
+import WorldEditDialog from '@/pages/worlds/list/modals/WorldEditDialog.vue'
+import Worlds from '@/pages/worlds/list/Worlds.vue'
 
 const store = useWorldsListStore()
 const { getItems } = storeToRefs(store)
 
+const selectedItemId = ref<number | null>(null)
 const createDialogOpened = ref<boolean>(false)
-const authorEditDialogOpened = ref<boolean>(false)
-const demiurgeEditDialogOpened = ref<boolean>(false)
+const editDialogOpened = ref<boolean>(false)
 const deleteDialogOpened = ref<boolean>(false)
 
 const openCreateDialog = () => {
@@ -22,41 +22,48 @@ const openCreateDialog = () => {
 
 const closeCreateDialog = (needReload: boolean) => {
   createDialogOpened.value = false
+  if (needReload) store.reloadList(false)
 }
 
-const openAuthorEditDialog = () => {
-  authorEditDialogOpened.value = true
+const openEditDialog = (id: number) => {
+  selectedItemId.value = id
+  editDialogOpened.value = true
+}
+const closeEditDialog = (needReload: boolean) => {
+  editDialogOpened.value = false
+  selectedItemId.value = null
+  if (needReload) store.reloadList(false)
 }
 
-const closeAuthorEditDialog = (needReload: boolean) => {
-  authorEditDialogOpened.value = false
-}
-
-const openDemiurgeEditDialog = () => {
-  demiurgeEditDialogOpened.value = true
-}
-
-const closeDemiurgeEditDialog = (needReload: boolean) => {
-  demiurgeEditDialogOpened.value = false
-}
-
-const openDeleteDialog = () => {
+const openDeleteDialog = (id: number) => {
+  selectedItemId.value = id
   deleteDialogOpened.value = true
 }
 
 const closeDeleteDialog = (needReload: boolean) => {
   deleteDialogOpened.value = false
+  selectedItemId.value = null
+  if (needReload) store.reloadList(true)
 }
 </script>
 
 <template>
   <list-page-template :store="store" @create="openCreateDialog">
-    <template #items> {{ getItems }} </template>
+    <template #items>
+      <worlds :items="getItems" @edit="openEditDialog" @delete="openDeleteDialog" />
+    </template>
   </list-page-template>
   <world-create-dialog v-if="createDialogOpened" @close="closeCreateDialog" />
-  <world-author-edit-dialog :opened="authorEditDialogOpened" />
-  <world-demiurge-edit-dialog :opened="demiurgeEditDialogOpened" />
-  <world-delete-dialog :opened="deleteDialogOpened" />
+  <world-edit-dialog
+    v-if="editDialogOpened && selectedItemId"
+    :item-id="selectedItemId"
+    @close="closeEditDialog"
+  />
+  <world-delete-dialog
+    v-if="deleteDialogOpened && selectedItemId"
+    :item-id="selectedItemId"
+    @close="closeDeleteDialog"
+  />
 </template>
 
 <style scoped></style>

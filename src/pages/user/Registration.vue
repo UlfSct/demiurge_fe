@@ -57,7 +57,7 @@ const validateFormData = () => {
   }
 }
 
-const prepareFormData = (): RegisterRequestPayloadData => {
+const prepareRequestData = (): RegisterRequestPayloadData => {
   return {
     username: String(formData.value.username),
     email: String(formData.value.email),
@@ -76,7 +76,7 @@ const register = async () => {
     return
   }
   try {
-    await userStore.register(prepareFormData())
+    await userStore.register(prepareRequestData())
     goToMain()
   } catch (error) {
     setErrors(error as RequestErrorObject)

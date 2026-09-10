@@ -47,7 +47,7 @@ const canvasToFile = (canvas: HTMLCanvasElement, fileName: string): Promise<File
   })
 }
 
-const prepareFormData = () => {
+const prepareRequestData = () => {
   let data = new FormData()
   data.append('avatar', avatarField.value ? avatarField.value : EMPTY_FILE_VALUE)
   return data
@@ -62,7 +62,7 @@ const apply = async () => {
     return
   }
   try {
-    await userStore.updateProfile(prepareFormData())
+    await userStore.updateProfile(prepareRequestData())
     close()
   } catch (error) {
     setErrors(error as RequestErrorObject)

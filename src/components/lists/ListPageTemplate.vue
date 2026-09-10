@@ -38,7 +38,10 @@ const changeItemsPerPageValue = (value: number) => {
       :loading="props.store.getLoading"
       @change-items-per-page-value="changeItemsPerPageValue"
     />
-    <slot name="items" />
+    <slot v-if="!props.store.getLoading" name="items" />
+    <v-card v-else class="default-card px-5 py-4 w-100 mt-2 text-center">
+      Идёт загрузка данных...
+    </v-card>
     <pagination-footer
       :count="props.store.getCount"
       :items-per-page="props.store.getItemsPerPage"

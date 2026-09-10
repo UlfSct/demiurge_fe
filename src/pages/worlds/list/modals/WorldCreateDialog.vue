@@ -35,7 +35,7 @@ const validateFormData = () => {
   if (!formData.value.caption) setError('caption', 'Это поле обязательно для заполнения')
 }
 
-const prepareFormData = (): WorldsCreateRequestData => {
+const prepareRequestData = (): WorldsCreateRequestData => {
   return {
     name: String(formData.value.name),
     caption: String(formData.value.caption),
@@ -52,7 +52,7 @@ const apply = async () => {
   validateFormData()
   if (hasErrors()) return
   try {
-    await store.execute(prepareFormData())
+    await store.execute(prepareRequestData())
     close(true)
   } catch (error) {
     setErrors(error as RequestErrorObject)

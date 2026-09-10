@@ -27,6 +27,8 @@ export interface PaginatedListData<T> {
   deleteAdditionalQueryParam: (key: string) => void
   clearRequestParams: () => void
   clearAdditionalQueryParams: () => void
+  reloadList: (needLastItemDeletedCheck: boolean) => Promise<void>
+  resetList: () => void
 }
 
 export const usePaginatedListData = <T>(
@@ -76,8 +78,19 @@ export const usePaginatedListData = <T>(
       error.value = ''
       items.value = response.data.results
       count.value = response.data.count
-      loading.value = false
     })
+    loading.value = false
+  }
+
+  const reloadList = async (needLastItemDeletedCheck: boolean = false) => {
+    if (needLastItemDeletedCheck && page.value !== 1) {
+      if ((count.value - 1) % itemsPerPage.value === 0) setPage(page.value - 1)
+    }
+
+    await loadData(
+      requestParams.value,
+      getRequestQuery(page.value, itemsPerPage.value, additionalQuery.value),
+    )
   }
 
   watch(
@@ -149,6 +162,12 @@ export const usePaginatedListData = <T>(
     withPageReset(() => (additionalQuery.value = {}))
   }
 
+  const resetList = () => {
+    clearAdditionalQueryParams()
+    setPage(1)
+    setItemsPerPage(Number(ITEMS_PER_PAGE_SELECTOR_ITEMS[0]))
+  }
+
   return {
     getPage,
     getItemsPerPage,
@@ -166,5 +185,7 @@ export const usePaginatedListData = <T>(
     deleteAdditionalQueryParam,
     clearRequestParams,
     clearAdditionalQueryParams,
+    reloadList,
+    resetList,
   }
 }

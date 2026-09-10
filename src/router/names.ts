@@ -11,6 +11,9 @@ const routerNames = {
   PROFILE: undefined,
   WORlDS: {
     LIST: undefined,
+    DETAIL: {
+      INDEX: undefined,
+    },
   },
   WORKSPACES: {
     LIST: undefined,

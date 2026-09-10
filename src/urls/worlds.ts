@@ -24,6 +24,7 @@ const worldsUrls = {
       DELETE: {
         path: '/demiurge/world/{id}/',
         method: HTTP_METHODS.DELETE,
+        isEmptyResponse: true,
       },
     },
     GET: {

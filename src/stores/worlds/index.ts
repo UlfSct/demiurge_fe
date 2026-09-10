@@ -1,33 +1,36 @@
 import { urls } from '@/urls'
-import type { NumberSelectorItem } from '@/types/utils.ts'
+import type { FileDetail, NumberSelectorItem, WorldArticle } from '@/types/utils.ts'
 import {
   createBaseActionStore,
-  createBaseDetailStore,
-  createPaginatedListStore,
+  createBaseResponseStore,
+  createPaginatedResponseStore,
 } from '@/utils/store.ts'
 
 export type WorldsListItem = {
   id: number
-  demiurge: string
-  authors: NumberSelectorItem[]
-  is_demiurge: boolean
-  is_author: boolean
   name: string
   caption: string
   is_public: boolean
+  demiurge: string
+  is_demiurge: boolean
+  is_author: boolean
+  authors: NumberSelectorItem[]
+  images: FileDetail[]
   article: number | null
 }
 
 export type WorldDetail = {
   id: number
-  demiurge: string
-  authors: NumberSelectorItem[]
-  is_demiurge: boolean
-  is_author: boolean
   name: string
   caption: string
   is_public: boolean
-  article: number | null
+  demiurge: string
+  is_demiurge: boolean
+  is_author: boolean
+  authors: NumberSelectorItem[]
+  images: FileDetail[]
+  files: FileDetail[]
+  article: WorldArticle | null
 }
 
 export type WorldsCreateRequestData = {
@@ -36,12 +39,18 @@ export type WorldsCreateRequestData = {
   is_public: boolean
 }
 
-export const useWorldsListStore = createPaginatedListStore<WorldsListItem>({
+export type WorldsAuthorEditRequestData = {
+  name: string
+  caption: string
+  is_public: boolean
+}
+
+export const useWorldsListStore = createPaginatedResponseStore<WorldsListItem>({
   storeId: 'worldsList',
   url: urls.WORLDS.LIST,
 })
 
-export const useWorldsDetailStore = createBaseDetailStore<WorldDetail>({
+export const useWorldsDetailStore = createBaseResponseStore<WorldDetail>({
   storeId: 'worldsDetail',
   url: urls.WORLDS.DETAIL.GET,
 })
@@ -56,7 +65,7 @@ export const useWorldsDeleteStore = createBaseActionStore({
   url: urls.WORLDS.DETAIL.DEMIURGE.DELETE,
 })
 
-export const useWorldsAuthorEditStore = createBaseActionStore({
+export const useWorldsAuthorEditStore = createBaseActionStore<WorldsAuthorEditRequestData>({
   storeId: 'worldsAuthorEdit',
   url: urls.WORLDS.DETAIL.AUTHOR.EDIT,
 })

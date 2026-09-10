@@ -4,7 +4,7 @@ const emit = defineEmits<{
 }>()
 
 interface IProps {
-  icon: string
+  icon?: string
   readonly?: boolean
 }
 

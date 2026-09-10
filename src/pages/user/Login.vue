@@ -45,7 +45,7 @@ const validateFormData = () => {
   if (!formData.value.password) setError('password', 'Это поле обязательно для заполнения')
 }
 
-const prepareFormData = (): LoginRequestPayloadData => {
+const prepareRequestData = (): LoginRequestPayloadData => {
   return {
     username: String(formData.value.username),
     password: String(formData.value.password),
@@ -61,7 +61,7 @@ const login = async () => {
     return
   }
   try {
-    await userStore.login(prepareFormData())
+    await userStore.login(prepareRequestData())
     goToMain()
   } catch (error) {
     setErrors(error as RequestErrorObject)

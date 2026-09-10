@@ -14,6 +14,8 @@ type BasePaginatedStore<T> = {
   getError: Ref<string | null>
   setPage: (page: number) => void
   setItemsPerPage: (count: number) => void
+  reloadList: (needLastItemDeletedCheck: boolean) => Promise<void>
+  resetList: () => void
 }
 
 type BaseActionStore<TData extends object> = {
@@ -32,7 +34,7 @@ type StoreOptions = {
   url: UrlEntry
 }
 
-export function createPaginatedListStore<T extends object>(options: StoreOptions) {
+export function createPaginatedResponseStore<T extends object>(options: StoreOptions) {
   const { storeId, url } = options
 
   return defineStore(storeId, () => {
@@ -45,6 +47,8 @@ export function createPaginatedListStore<T extends object>(options: StoreOptions
       getPage,
       setPage,
       setItemsPerPage,
+      reloadList,
+      resetList,
     } = usePaginatedListData<T>(url)
 
     const baseStore: BasePaginatedStore<T> = {
@@ -56,6 +60,8 @@ export function createPaginatedListStore<T extends object>(options: StoreOptions
       getError,
       setPage,
       setItemsPerPage,
+      reloadList,
+      resetList,
     }
 
     return {
@@ -64,7 +70,7 @@ export function createPaginatedListStore<T extends object>(options: StoreOptions
   })
 }
 
-export function createBaseDetailStore<T extends object>(options: StoreOptions) {
+export function createBaseResponseStore<T extends object>(options: StoreOptions) {
   const { storeId, url } = options
 
   return defineStore(storeId, () => {
@@ -124,9 +130,7 @@ export function createBaseActionStore<TData extends object>(options: StoreOption
       try {
         await executeWithMinDuration(async () => {
           let response = await sendRequest<unknown>(url, data, params, query)
-          if (!response.isSuccess) {
-            throw response.data
-          }
+          if (!response.isSuccess) throw response.data
         })
       } catch (error) {
         loading.value = false

@@ -36,7 +36,7 @@ const validateFormData = () => {
   if (!formData.value.username) setError('username', 'Это поле обязательно для заполнения')
 }
 
-const prepareFormData = () => {
+const prepareRequestData = () => {
   let data = new FormData()
   data.append('username', String(formData.value.username))
   data.append('last_name', formData.value.last_name ? String(formData.value.last_name) : '')
@@ -53,7 +53,7 @@ const apply = async () => {
     return
   }
   try {
-    await userStore.updateProfile(prepareFormData())
+    await userStore.updateProfile(prepareRequestData())
     close()
   } catch (error) {
     setErrors(error as RequestErrorObject)

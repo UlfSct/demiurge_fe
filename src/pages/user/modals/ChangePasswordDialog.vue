@@ -39,7 +39,7 @@ const validateFormData = () => {
   if (!formData.value.old_password) setError('old_password', 'Это поле обязательно для заполнения')
 }
 
-const prepareFormData = (): ChangePasswordRequestPayloadData => {
+const prepareRequestData = (): ChangePasswordRequestPayloadData => {
   return {
     new_password: String(formData.value.new_password),
     old_password: String(formData.value.old_password),
@@ -55,7 +55,7 @@ const apply = async () => {
     return
   }
   try {
-    await userStore.changePassword(prepareFormData())
+    await userStore.changePassword(prepareRequestData())
     close()
   } catch (error) {
     setErrors(error as RequestErrorObject)
