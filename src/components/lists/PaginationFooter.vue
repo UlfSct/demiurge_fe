@@ -48,7 +48,7 @@ const showAfterPageEllipsis = (value: number): boolean => {
 <template>
   <v-card class="default-card px-5 py-4 w-100 mt-2" v-if="props.count > 0">
     <v-row no-gutters class="ga-2 flex-wrap justify-center">
-      <v-row no-gutters class="text-center align-center max-width-260">
+      <v-row no-gutters class="text-center align-center max-width--fit-content">
         <v-row no-gutters class="ga-2">
           <template v-for="i in getMaxPages">
             <pagination-footer-page

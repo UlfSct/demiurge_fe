@@ -6,6 +6,7 @@ import LoadingBlock from '@/components/core/LoadingBlock.vue'
 
 const emit = defineEmits<{
   create: []
+  back: []
 }>()
 
 interface IPaginatedStore {
@@ -19,6 +20,7 @@ interface IPaginatedStore {
 
 interface IProps {
   store: IPaginatedStore
+  title: string
 }
 
 const props = defineProps<IProps>()
@@ -34,9 +36,9 @@ const changeItemsPerPageValue = (value: number) => {
 
 <template>
   <v-row no-gutters class="pa-5">
-    <list-title title="Доступные миры" :loading="props.store.getLoading" />
+    <list-title :title="props.title" :loading="props.store.getLoading" @back="emit('back')" />
     <list-header :loading="props.store.getLoading" @create="emit('create')" />
-    <slot v-if="!props.store.getLoading" name="items" />
+    <slot v-if="!props.store.getLoading" />
     <loading-block v-else class="mt-2" />
     <pagination-footer
       :count="props.store.getCount"
