@@ -23,7 +23,7 @@ const display = useDisplay()
 const getColClass = (index: number): string => {
   const getItemsPerRow = (): number => {
     let itemsPerRow = 4
-    if (display.smAndDown.value) itemsPerRow = 2
+    if (display.lgAndDown.value) itemsPerRow = 2
     if (display.xs.value) itemsPerRow = 1
     return itemsPerRow
   }

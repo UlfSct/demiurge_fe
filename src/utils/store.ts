@@ -23,10 +23,12 @@ type BaseActionStore<TData extends object> = {
   execute: (data: TData, params?: RequestParams, query?: RequestQuery) => Promise<void>
 }
 
-type BaseDetailStore<TData extends object> = {
+type BaseResponseStore<TData extends object> = {
   getLoading: Ref<boolean>
-  getItem: Ref<TData | null>
+  getData: Ref<TData | null>
   execute: (data: {}, params?: RequestParams, query?: RequestQuery) => Promise<void>
+  isErrorResponse: Ref<boolean>
+  isNotFoundResponse: Ref<boolean>
 }
 
 type StoreOptions = {
@@ -76,8 +78,18 @@ export function createBaseResponseStore<T extends object>(options: StoreOptions)
   return defineStore(storeId, () => {
     const loading = ref<boolean>(false)
     const item = ref<T | null>(null)
+    const statusCode = ref<number | null>(null)
     const getLoading = readonly(loading)
-    const getItem = computed(() => item.value)
+    const getData = computed(() => item.value)
+
+    const isErrorResponse = computed((): boolean => {
+      const str = String(statusCode.value)
+      return str[0] === '4' || str[0] === '5'
+    })
+
+    const isNotFoundResponse = computed((): boolean => {
+      return isErrorResponse.value && statusCode.value === 404
+    })
 
     const execute = async (
       data: {} = {},
@@ -87,22 +99,25 @@ export function createBaseResponseStore<T extends object>(options: StoreOptions)
       if (loading.value) return
 
       loading.value = true
+      statusCode.value = null
       try {
         await executeWithMinDuration(async () => {
           let response = await sendRequest<T>(url, data, params, query)
+          statusCode.value = response.statusCode
           if (!response.isSuccess) throw response.data
           item.value = response.data
         })
       } catch (error) {
         loading.value = false
-        throw error
       }
       loading.value = false
     }
 
-    const baseStore: BaseDetailStore<T> = {
+    const baseStore: BaseResponseStore<T> = {
       getLoading,
-      getItem,
+      getData,
+      isErrorResponse,
+      isNotFoundResponse,
       execute,
     }
 

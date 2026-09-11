@@ -2,6 +2,7 @@
 import ListTitle from '@/components/lists/ListTitle.vue'
 import PaginationFooter from '@/components/lists/PaginationFooter.vue'
 import ListHeader from '@/components/lists/ListHeader.vue'
+import LoadingBlock from '@/components/core/LoadingBlock.vue'
 
 const emit = defineEmits<{
   create: []
@@ -39,9 +40,7 @@ const changeItemsPerPageValue = (value: number) => {
       @change-items-per-page-value="changeItemsPerPageValue"
     />
     <slot v-if="!props.store.getLoading" name="items" />
-    <v-card v-else class="default-card px-5 py-4 w-100 mt-2 text-center">
-      Идёт загрузка данных...
-    </v-card>
+    <loading-block v-else class="mt-2" />
     <pagination-footer
       :count="props.store.getCount"
       :items-per-page="props.store.getItemsPerPage"
