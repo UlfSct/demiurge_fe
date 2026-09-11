@@ -71,7 +71,6 @@ export const usePaginatedListData = <T>(
 
       if (!response.isSuccess) {
         error.value = 'Непредвиденная ошибка загрузки списка'
-        loading.value = false
         return
       }
 

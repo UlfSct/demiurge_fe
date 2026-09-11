@@ -115,9 +115,9 @@
   --spacing-lg: 24px;
 }
 
-@for $i from 1 through 100 {
-  .max-width-#{$i * 10} {
-    max-width: #{$i * 10}px !important;
+@for $i from 1 through 200 {
+  .max-width-#{$i * 5} {
+    max-width: #{$i * 5}px !important;
   }
 }
 
@@ -548,6 +548,13 @@ body {
     width: 30px !important;
     height: 30px !important;
     min-width: unset !important;
+
+    @for $i from 1 through 50 {
+      &--s#{$i} {
+        width: #{$i}px !important;
+        height: #{$i}px !important;
+      }
+    }
 
     &--no-shadow {
       background: var(--gradient-gold) !important;

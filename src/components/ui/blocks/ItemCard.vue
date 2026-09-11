@@ -11,9 +11,9 @@ const props = defineProps<IProps>()
 <template>
   <v-card class="default-card pa-2 fill-height d-flex flex-column">
     <v-img :src="props.image" :aspect-ratio="16 / 9" cover color="transparent" />
-    <v-card-title class="card-title text-wrap pt-3">{{ props.title }}</v-card-title>
-    <v-card-text class="card-title card-title__subtitle">{{ props.subtitle }}</v-card-text>
-    <v-row no-gutters class="px-4 pb-3 mt-auto align-content-end">
+    <v-card-title class="card-title text-wrap pt-3 px-3">{{ props.title }}</v-card-title>
+    <v-card-text class="card-title card-title__subtitle px-3">{{ props.subtitle }}</v-card-text>
+    <v-row no-gutters class="px-3 pb-3 mt-auto align-content-end">
       <slot name="btn" />
     </v-row>
   </v-card>

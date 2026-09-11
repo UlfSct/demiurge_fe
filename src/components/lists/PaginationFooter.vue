@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import PaginationFooterPage from '@/components/lists/PaginationFooterPage.vue'
+import { ITEMS_PER_PAGE_SELECTOR_ITEMS } from '@/utils/consts.ts'
 
 const emit = defineEmits<{
   setPage: [value: number]
+  changeItemsPerPageValue: [value: number]
 }>()
 
 interface IProps {
@@ -15,8 +17,10 @@ interface IProps {
 
 const props = defineProps<IProps>()
 
-const getMaxPages = computed(() => Math.ceil(props.count / props.itemsPerPage))
+const localItemsPerPage = ref(12)
 
+// const getMaxPages = computed(() => Math.ceil(props.count / props.itemsPerPage))
+const getMaxPages = computed(() => 99)
 const setPage = (page: number): void => {
   if (props.loading) return
   emit('setPage', page)
@@ -43,22 +47,41 @@ const showAfterPageEllipsis = (value: number): boolean => {
 
 <template>
   <v-card class="default-card px-5 py-4 w-100 mt-2" v-if="props.count > 0">
-    <v-row no-gutters class="ga-2 justify-center text-center">
-      <template v-for="i in getMaxPages">
-        <pagination-footer-page
-          v-if="showPageNumber(i)"
-          :selected="i === props.page"
-          :page="i"
-          :key="`pagination-footer-page-${i}`"
-          @set-page="setPage"
-        />
-        <span
-          v-if="showAfterPageEllipsis(i)"
-          class="w-30px h-30px form-footer-text font-size-16 text-center justify-center ls-3px pt-1"
-        >
-          ...
+    <v-row no-gutters class="ga-2 flex-wrap justify-center">
+      <v-row no-gutters class="text-center align-center max-width-260">
+        <v-row no-gutters class="ga-2">
+          <template v-for="i in getMaxPages">
+            <pagination-footer-page
+              v-if="showPageNumber(i)"
+              :selected="i === props.page"
+              :page="i"
+              :key="`pagination-footer-page-${i}`"
+              @set-page="setPage"
+            />
+            <span
+              v-if="showAfterPageEllipsis(i)"
+              class="w-30px h-30px form-footer-text font-size-16 text-center justify-center ls-3px pt-1"
+            >
+              ...
+            </span>
+          </template>
+        </v-row>
+      </v-row>
+      <v-row no-gutters class="justify-end ml-auto flex-shrink-0 flex-wrap">
+        <span class="card-title__subtitle pt-2 pr-2 text-wrap text-break">
+          Записей на странице:
         </span>
-      </template>
+        <v-select
+          v-model="localItemsPerPage"
+          class="form-input max-width-90"
+          :items="ITEMS_PER_PAGE_SELECTOR_ITEMS"
+          density="compact"
+          :readonly="props.loading"
+          placeholder="Поиск"
+          hide-details
+          @update:model-value="(val) => emit('changeItemsPerPageValue', val)"
+        />
+      </v-row>
     </v-row>
   </v-card>
 </template>

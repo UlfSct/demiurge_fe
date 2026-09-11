@@ -34,11 +34,8 @@ const changeItemsPerPageValue = (value: number) => {
 
 <template>
   <v-row no-gutters class="pa-5">
-    <list-title title="Доступные миры" :loading="props.store.getLoading" @add="emit('create')" />
-    <list-header
-      :loading="props.store.getLoading"
-      @change-items-per-page-value="changeItemsPerPageValue"
-    />
+    <list-title title="Доступные миры" :loading="props.store.getLoading" />
+    <list-header :loading="props.store.getLoading" @create="emit('create')" />
     <slot v-if="!props.store.getLoading" name="items" />
     <loading-block v-else class="mt-2" />
     <pagination-footer
@@ -47,6 +44,7 @@ const changeItemsPerPageValue = (value: number) => {
       :page="props.store.getPage"
       :loading="props.store.getLoading"
       @set-page="changePageValue"
+      @change-items-per-page-value="changeItemsPerPageValue"
     />
   </v-row>
 </template>
