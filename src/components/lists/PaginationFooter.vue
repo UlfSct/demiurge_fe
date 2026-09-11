@@ -19,8 +19,8 @@ const props = defineProps<IProps>()
 
 const localItemsPerPage = ref(12)
 
-// const getMaxPages = computed(() => Math.ceil(props.count / props.itemsPerPage))
-const getMaxPages = computed(() => 99)
+const getMaxPages = computed(() => Math.ceil(props.count / props.itemsPerPage))
+
 const setPage = (page: number): void => {
   if (props.loading) return
   emit('setPage', page)
