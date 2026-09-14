@@ -19,13 +19,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 <template>
   <v-card class="default-card px-5 py-4 w-100">
-    <v-row no-gutters class="align-content-center flex-wrap">
-      <v-card-title
-        class="card-title card-title--no-margins card-title__subtitle text-wrap text-break font-weight-bold"
-      >
-        Главная > <span class="text-decoration-underline"> Миры</span>
-      </v-card-title>
-    </v-row>
+    <slot />
     <v-row no-gutters class="align-content-center mt-2 flex-nowrap">
       <icon-button icon="arrow_back" class="mr-3" @click="emit('back')" />
       <v-row no-gutters style="margin-top: 2px">

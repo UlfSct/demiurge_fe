@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ListTitle from '@/components/lists/ListTitle.vue'
+import PageTitle from '@/components/lists/PageTitle.vue'
 import PaginationFooter from '@/components/lists/PaginationFooter.vue'
 import ListHeader from '@/components/lists/ListHeader.vue'
 import LoadingBlock from '@/components/core/LoadingBlock.vue'
@@ -20,7 +20,6 @@ interface IPaginatedStore {
 
 interface IProps {
   store: IPaginatedStore
-  title: string
 }
 
 const props = defineProps<IProps>()
@@ -36,7 +35,7 @@ const changeItemsPerPageValue = (value: number) => {
 
 <template>
   <v-row no-gutters class="pa-5">
-    <list-title :title="props.title" :loading="props.store.getLoading" @back="emit('back')" />
+    <slot name="title" />
     <list-header :loading="props.store.getLoading" @create="emit('create')" />
     <slot v-if="!props.store.getLoading" />
     <loading-block v-else class="mt-2" />

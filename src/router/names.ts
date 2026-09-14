@@ -13,6 +13,9 @@ const routerNames = {
     LIST: undefined,
     DETAIL: {
       INDEX: undefined,
+      FACTIONS: undefined,
+      LOCATIONS: undefined,
+      ITEMS: undefined,
     },
   },
   WORKSPACES: {

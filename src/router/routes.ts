@@ -5,7 +5,10 @@ import Registration from '@/pages/user/Registration.vue'
 import Login from '@/pages/user/Login.vue'
 import Profile from '@/pages/user/Profile.vue'
 import WorldsList from '@/pages/worlds/list/Page.vue'
-import WorldsDetail from '@/pages/worlds/detail/index/Page.vue'
+import WorldDetail from '@/pages/worlds/detail/index/Page.vue'
+import WorldFactions from '@/pages/worlds/detail/factions/Page.vue'
+import WorldLocations from '@/pages/worlds/detail/locations/Page.vue'
+import WorldItems from '@/pages/worlds/detail/items/Page.vue'
 import CharactersList from '@/pages/characters/List.vue'
 import WorkspacesList from '@/pages/workspaces/List.vue'
 import PartiesList from '@/pages/parties/List.vue'
@@ -19,7 +22,22 @@ const worldsRoutes: RouteRecordRaw[] = [
   {
     name: String(routerNames.WORlDS.DETAIL.INDEX),
     path: '/worlds/:id',
-    component: WorldsDetail,
+    component: WorldDetail,
+  },
+  {
+    name: String(routerNames.WORlDS.DETAIL.FACTIONS),
+    path: '/worlds/:id/factions',
+    component: WorldFactions,
+  },
+  {
+    name: String(routerNames.WORlDS.DETAIL.LOCATIONS),
+    path: '/worlds/:id/locations',
+    component: WorldLocations,
+  },
+  {
+    name: String(routerNames.WORlDS.DETAIL.ITEMS),
+    path: '/worlds/:id/items',
+    component: WorldItems,
   },
 ]
 

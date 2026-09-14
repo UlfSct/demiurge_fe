@@ -9,10 +9,12 @@ import WorldEditDialog from '@/pages/worlds/list/modals/WorldEditDialog.vue'
 import Worlds from '@/pages/worlds/list/Worlds.vue'
 import { useRouter } from 'vue-router'
 import routerNames from '@/router/names.ts'
+import PageTitle from '@/components/lists/PageTitle.vue'
+import WordsTitle from '@/components/worlds/WordsTitle.vue'
 
 const router = useRouter()
 const store = useWorldsListStore()
-const { getItems } = storeToRefs(store)
+const { getItems, getLoading } = storeToRefs(store)
 
 const selectedItemId = ref<number | null>(null)
 const createDialogOpened = ref<boolean>(false)
@@ -57,13 +59,11 @@ const onBackHandler = () => {
 </script>
 
 <template>
-  <list-page-template
-    :store="store"
-    title="Доступные миры"
-    @create="openCreateDialog"
-    @back="onBackHandler"
-  >
+  <list-page-template :store="store" @create="openCreateDialog" @back="onBackHandler">
     <worlds :items="getItems" @edit="openEditDialog" @delete="openDeleteDialog" />
+    <template #title>
+      <words-title title="Доступные миры" :loading="getLoading" @back="onBackHandler" />
+    </template>
   </list-page-template>
   <world-create-dialog v-if="createDialogOpened" @close="closeCreateDialog" />
   <world-edit-dialog
