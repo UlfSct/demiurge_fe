@@ -1,16 +1,22 @@
 <script setup lang="ts">
 import { useWorldsDetailStore } from '@/stores/worlds'
 import { computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import LoadingBlock from '@/components/core/LoadingBlock.vue'
-import BasicTextBlock from '@/components/core/BasicTextBlock.vue'
+import WorldsTitle from '@/components/worlds/WorldsTitle.vue'
+import routerNames from '@/router/names.ts'
+import WorldDetail from '@/pages/worlds/detail/index/WorldDetail.vue'
 
 const route = useRoute()
+const router = useRouter()
 const store = useWorldsDetailStore()
-const { isErrorResponse, isNotFoundResponse, getLoading, getData } = storeToRefs(store)
+const { getLoading } = storeToRefs(store)
 
 const requestParams = computed(() => ({ id: Number(route.params.id) }))
+
+const onBackHandler = () => {
+  router.push({ name: routerNames.WORLDS.LIST })
+}
 
 onMounted(() => {
   store.execute({}, requestParams.value)
@@ -19,13 +25,8 @@ onMounted(() => {
 
 <template>
   <v-row no-gutters class="pa-5">
-    <loading-block v-if="getLoading" />
-    <basic-text-block
-      v-else-if="isNotFoundResponse"
-      text="Мир не существует или у вас нет прав для его просмотра"
-    />
-    <basic-text-block v-else-if="isErrorResponse" text="Неизвестная ошибка загрузки данных" />
-    <div v-else-if="getData">getData {{ getData }}</div>
+    <worlds-title title="Мир" :loading="getLoading" @back="onBackHandler" />
+    <world-detail :store="store" />
   </v-row>
 </template>
 

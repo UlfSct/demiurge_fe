@@ -314,6 +314,17 @@ body {
   border-bottom: 1px solid transparent;
   padding-bottom: 1px;
 
+  &__underline {
+    text-decoration: underline !important;
+    color: var(--color-text-muted) !important;
+
+    &--static {
+      cursor: default;
+      text-decoration: underline !important;
+      color: var(--color-text-gold) !important;
+    }
+  }
+
   &:hover {
     color: var(--gold-light) !important;
     text-shadow: var(--text-glow-link-hover);

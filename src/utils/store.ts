@@ -23,7 +23,7 @@ type BaseActionStore<TData extends object> = {
   execute: (data: TData, params?: RequestParams, query?: RequestQuery) => Promise<void>
 }
 
-type BaseResponseStore<TData extends object> = {
+export type BaseResponseStore<TData extends object> = {
   getLoading: Ref<boolean>
   getData: Ref<TData | null>
   execute: (data: {}, params?: RequestParams, query?: RequestQuery) => Promise<void>

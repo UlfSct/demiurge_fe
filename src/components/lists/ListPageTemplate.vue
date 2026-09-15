@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import PageTitle from '@/components/lists/PageTitle.vue'
 import PaginationFooter from '@/components/lists/PaginationFooter.vue'
 import ListHeader from '@/components/lists/ListHeader.vue'
 import LoadingBlock from '@/components/core/LoadingBlock.vue'

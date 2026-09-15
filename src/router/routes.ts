@@ -6,6 +6,9 @@ import Login from '@/pages/user/Login.vue'
 import Profile from '@/pages/user/Profile.vue'
 import WorldsList from '@/pages/worlds/list/Page.vue'
 import WorldDetail from '@/pages/worlds/detail/index/Page.vue'
+import WorldAuthors from '@/pages/worlds/detail/authors/Page.vue'
+import WorldImages from '@/pages/worlds/detail/images/Page.vue'
+import WorldFiles from '@/pages/worlds/detail/files/Page.vue'
 import WorldFactions from '@/pages/worlds/detail/factions/Page.vue'
 import WorldLocations from '@/pages/worlds/detail/locations/Page.vue'
 import WorldItems from '@/pages/worlds/detail/items/Page.vue'
@@ -15,27 +18,42 @@ import PartiesList from '@/pages/parties/List.vue'
 
 const worldsRoutes: RouteRecordRaw[] = [
   {
-    name: String(routerNames.WORlDS.LIST),
+    name: String(routerNames.WORLDS.LIST),
     path: '/worlds',
     component: WorldsList,
   },
   {
-    name: String(routerNames.WORlDS.DETAIL.INDEX),
+    name: String(routerNames.WORLDS.DETAIL.INDEX),
     path: '/worlds/:id',
     component: WorldDetail,
   },
   {
-    name: String(routerNames.WORlDS.DETAIL.FACTIONS),
+    name: String(routerNames.WORLDS.DETAIL.AUTHORS),
+    path: '/worlds/:id/authors',
+    component: WorldAuthors,
+  },
+  {
+    name: String(routerNames.WORLDS.DETAIL.IMAGES),
+    path: '/worlds/:id/images',
+    component: WorldImages,
+  },
+  {
+    name: String(routerNames.WORLDS.DETAIL.FILES),
+    path: '/worlds/:id/files',
+    component: WorldFiles,
+  },
+  {
+    name: String(routerNames.WORLDS.DETAIL.FACTIONS),
     path: '/worlds/:id/factions',
     component: WorldFactions,
   },
   {
-    name: String(routerNames.WORlDS.DETAIL.LOCATIONS),
+    name: String(routerNames.WORLDS.DETAIL.LOCATIONS),
     path: '/worlds/:id/locations',
     component: WorldLocations,
   },
   {
-    name: String(routerNames.WORlDS.DETAIL.ITEMS),
+    name: String(routerNames.WORLDS.DETAIL.ITEMS),
     path: '/worlds/:id/items',
     component: WorldItems,
   },

@@ -9,10 +9,13 @@ const routerNames = {
   LOGIN: undefined,
   REGISTRATION: undefined,
   PROFILE: undefined,
-  WORlDS: {
+  WORLDS: {
     LIST: undefined,
     DETAIL: {
       INDEX: undefined,
+      AUTHORS: undefined,
+      FILES: undefined,
+      IMAGES: undefined,
       FACTIONS: undefined,
       LOCATIONS: undefined,
       ITEMS: undefined,

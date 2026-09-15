@@ -64,7 +64,7 @@ const getItemImage = (item: WorldsListItem): string => {
 
 const goToDetail = (item: WorldsListItem) => {
   router.push({
-    name: routerNames.WORlDS.DETAIL.INDEX,
+    name: routerNames.WORLDS.DETAIL.INDEX,
     params: {
       id: item.id,
     },

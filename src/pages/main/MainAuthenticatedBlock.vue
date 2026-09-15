@@ -10,7 +10,7 @@ const cards: IMainRouterCard[] = [
   {
     title: 'Миры',
     text: 'Погружайтесь в создание собственных вселенных. Здесь вы можете хранить и систематизировать справочники, географические карты, историю народов, пантеоны богов и ключевых NPC. Всё, что делает ваш мир уникальным, найдёт своё место здесь.',
-    routeName: String(routerNames.WORlDS.LIST),
+    routeName: String(routerNames.WORLDS.LIST),
     image: worlds,
   },
   {
