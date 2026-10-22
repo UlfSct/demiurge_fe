@@ -25,3 +25,8 @@ export enum HTTP_METHODS {
 }
 
 export const ITEMS_PER_PAGE_SELECTOR_ITEMS: number[] = [12, 24, 48, 96]
+
+export enum WORKSPACE_ROLES {
+  ADMIN = 1,
+  MEMBER = 2,
+}

@@ -6,6 +6,7 @@ import LoadingBlock from '@/components/core/LoadingBlock.vue'
 const emit = defineEmits<{
   create: []
   back: []
+  'update:search': [value: string]
 }>()
 
 interface IPaginatedStore {
@@ -19,9 +20,16 @@ interface IPaginatedStore {
 
 interface IProps {
   store: IPaginatedStore
+  searchable?: boolean
+  search?: string
+  showPagination?: boolean
 }
 
-const props = defineProps<IProps>()
+const props = withDefaults(defineProps<IProps>(), {
+  searchable: false,
+  search: '',
+  showPagination: true,
+})
 
 const changePageValue = (value: number): void => {
   props.store.setPage(value)
@@ -35,10 +43,17 @@ const changeItemsPerPageValue = (value: number) => {
 <template>
   <v-row no-gutters class="pa-5">
     <slot name="title" />
-    <list-header :loading="props.store.getLoading" @create="emit('create')" />
+    <list-header
+      :loading="props.store.getLoading"
+      :searchable="props.searchable"
+      :search="props.search"
+      @update:search="emit('update:search', $event)"
+      @create="emit('create')"
+    />
     <slot v-if="!props.store.getLoading" />
     <loading-block v-else class="mt-2" />
     <pagination-footer
+      v-if="props.showPagination"
       :count="props.store.getCount"
       :items-per-page="props.store.getItemsPerPage"
       :page="props.store.getPage"

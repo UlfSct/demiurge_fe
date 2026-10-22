@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { usePaginatedListData } from '@/composables/usePaginatedListData.ts'
 import type { UrlEntry } from '@/types/urls.ts'
 import { computed, readonly, ref, type Ref } from 'vue'
-import type { RequestParams, RequestQuery } from '@/types/requests.ts'
+import type { RequestParams, RequestQuery, RequestQueryValue } from '@/types/requests.ts'
 import { executeWithMinDuration, sendRequest } from '@/utils/requests.ts'
 
 type BasePaginatedStore<T> = {
@@ -14,6 +14,8 @@ type BasePaginatedStore<T> = {
   getError: Ref<string | null>
   setPage: (page: number) => void
   setItemsPerPage: (count: number) => void
+  setAdditionalQueryParam: (key: string, value: RequestQueryValue) => void
+  deleteAdditionalQueryParam: (key: string) => void
   reloadList: (needLastItemDeletedCheck: boolean) => Promise<void>
   resetList: () => void
 }
@@ -26,7 +28,7 @@ type BaseActionStore<TData extends object> = {
 export type BaseResponseStore<TData extends object> = {
   getLoading: Ref<boolean>
   getData: Ref<TData | null>
-  execute: (data: {}, params?: RequestParams, query?: RequestQuery) => Promise<void>
+  execute: (data: object, params?: RequestParams, query?: RequestQuery) => Promise<void>
   isErrorResponse: Ref<boolean>
   isNotFoundResponse: Ref<boolean>
 }
@@ -34,10 +36,12 @@ export type BaseResponseStore<TData extends object> = {
 type StoreOptions = {
   storeId: string
   url: UrlEntry
+  defaultParams?: RequestParams
+  defaultQuery?: RequestQuery
 }
 
 export function createPaginatedResponseStore<T extends object>(options: StoreOptions) {
-  const { storeId, url } = options
+  const { storeId, url, defaultParams = {}, defaultQuery = {} } = options
 
   return defineStore(storeId, () => {
     const {
@@ -49,9 +53,11 @@ export function createPaginatedResponseStore<T extends object>(options: StoreOpt
       getPage,
       setPage,
       setItemsPerPage,
+      setAdditionalQueryParam,
+      deleteAdditionalQueryParam,
       reloadList,
       resetList,
-    } = usePaginatedListData<T>(url)
+    } = usePaginatedListData<T>(url, defaultParams, defaultQuery)
 
     const baseStore: BasePaginatedStore<T> = {
       getItems,
@@ -62,6 +68,8 @@ export function createPaginatedResponseStore<T extends object>(options: StoreOpt
       getError,
       setPage,
       setItemsPerPage,
+      setAdditionalQueryParam,
+      deleteAdditionalQueryParam,
       reloadList,
       resetList,
     }
@@ -92,7 +100,7 @@ export function createBaseResponseStore<T extends object>(options: StoreOptions)
     })
 
     const execute = async (
-      data: {} = {},
+      data: object = {},
       params: RequestParams = {},
       query: RequestQuery = {},
     ): Promise<void> => {
@@ -102,12 +110,12 @@ export function createBaseResponseStore<T extends object>(options: StoreOptions)
       statusCode.value = null
       try {
         await executeWithMinDuration(async () => {
-          let response = await sendRequest<T>(url, data, params, query)
+          const response = await sendRequest<T>(url, data, params, query)
           statusCode.value = response.statusCode
           if (!response.isSuccess) throw response.data
           item.value = response.data
         })
-      } catch (error) {
+      } catch {
         loading.value = false
       }
       loading.value = false
@@ -144,7 +152,7 @@ export function createBaseActionStore<TData extends object>(options: StoreOption
       loading.value = true
       try {
         await executeWithMinDuration(async () => {
-          let response = await sendRequest<unknown>(url, data, params, query)
+          const response = await sendRequest<unknown>(url, data, params, query)
           if (!response.isSuccess) throw response.data
         })
       } catch (error) {

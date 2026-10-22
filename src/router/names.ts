@@ -23,6 +23,7 @@ const routerNames = {
   },
   WORKSPACES: {
     LIST: undefined,
+    DETAIL: undefined,
   },
   CHARACTERS: {
     LIST: undefined,

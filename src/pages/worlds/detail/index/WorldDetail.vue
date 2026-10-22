@@ -2,7 +2,7 @@
 import type { WorldDetail } from '@/stores/worlds'
 import BaseResponseBlock, { type IBaseResponseStore } from '@/components/core/BaseResponseBlock.vue'
 import ItemCard from '@/components/ui/blocks/ItemCard.vue'
-import ImagePlaceholder from '@/assets/worlds/worldsListItemImagePlaceholder.svg'
+import ImagePlaceholder from '@/assets/listItemImagePlaceholder.svg'
 
 interface IProps {
   store: IBaseResponseStore<WorldDetail>

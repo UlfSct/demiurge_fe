@@ -43,7 +43,7 @@ const formData = ref<WorldEditFormData>({
 })
 
 const prepareFormData = () => {
-  let detail = Object.assign({}, detailStore.getItem)
+  const detail = Object.assign({}, detailStore.getData)
   formData.value = {
     name: detail.name,
     caption: detail.caption,
