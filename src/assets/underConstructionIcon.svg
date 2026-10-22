@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Цветовые градиенты на основе заданной палитры -->
+    <linearGradient id="goldLinear" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgb(230, 195, 74)"/>
+      <stop offset="50%" stop-color="rgb(212, 175, 55)"/>
+      <stop offset="100%" stop-color="rgb(139, 115, 85)"/>
+    </linearGradient>
+
+    <linearGradient id="goldLightGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="rgb(212, 175, 55)"/>
+      <stop offset="100%" stop-color="rgb(230, 195, 74)"/>
+    </linearGradient>
+
+    <radialGradient id="anvilGlow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="rgb(230, 195, 74)" stop-opacity="0.35"/>
+      <stop offset="60%" stop-color="rgb(212, 175, 55)" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="rgb(139, 115, 85)" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="sparkBurst" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="40%" stop-color="rgb(230, 195, 74)"/>
+      <stop offset="80%" stop-color="rgb(212, 175, 55)"/>
+      <stop offset="100%" stop-color="rgb(139, 115, 85)" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Фильтр магического свечения -->
+    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Фоновое сияние кузни -->
+  <circle cx="256" cy="256" r="210" fill="url(#anvilGlow)"/>
+
+  <!-- Внешний рунический обод -->
+  <circle cx="256" cy="256" r="236" fill="none" stroke="rgb(139, 115, 85)" stroke-width="2" stroke-dasharray="6, 8" opacity="0.6"/>
+  <circle cx="256" cy="256" r="222" fill="none" stroke="url(#goldLinear)" stroke-width="3.5"/>
+  <circle cx="256" cy="256" r="210" fill="none" stroke="rgb(139, 115, 85)" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- Кардинальные орнаментальные ромбы на круге -->
+  <g fill="url(#goldLightGrad)">
+    <polygon points="256,16 264,28 256,40 248,28"/>
+    <polygon points="256,472 264,484 256,496 248,484"/>
+    <polygon points="16,256 28,248 40,256 28,264"/>
+    <polygon points="472,256 484,248 496,256 484,264"/>
+    <!-- Диагональные маркеры -->
+    <circle cx="86" cy="86" r="3.5" fill="rgb(230, 195, 74)"/>
+    <circle cx="426" cy="86" r="3.5" fill="rgb(230, 195, 74)"/>
+    <circle cx="86" cy="426" r="3.5" fill="rgb(230, 195, 74)"/>
+    <circle cx="426" cy="426" r="3.5" fill="rgb(230, 195, 74)"/>
+  </g>
+
+  <!-- Фэнтезийная наковальня -->
+  <g id="anvil" filter="url(#goldGlow)">
+    <!-- Основание наковальни -->
+    <path d="M 160 382 L 352 382 L 366 408 L 146 408 Z" 
+          fill="url(#goldLinear)" stroke="rgb(139, 115, 85)" stroke-width="2"/>
+    <path d="M 180 348 L 332 348 L 344 382 L 168 382 Z" 
+          fill="rgb(139, 115, 85)" stroke="rgb(212, 175, 55)" stroke-width="1.5"/>
+
+    <!-- Ножка/стойка с руническим сужением -->
+    <path d="M 204 300 Q 230 330 200 348 L 312 348 Q 282 330 308 300 Z" 
+          fill="url(#goldLinear)"/>
+
+    <!-- Верхнее рабочее тело наковальни -->
+    <!-- Левый выступ (рог), плоское плато, правый задник -->
+    <path d="M 116 286 
+             C 144 286 176 292 200 300 
+             L 332 300 
+             L 348 286 
+             L 376 286 
+             L 376 266 
+             L 358 266 
+             L 358 254 
+             L 208 254 
+             C 172 254 136 270 116 286 Z" 
+          fill="url(#goldLightGrad)" stroke="rgb(139, 115, 85)" stroke-width="2"/>
+
+    <!-- Грань и фаска зеркала наковальни -->
+    <polygon points="208,254 358,254 366,262 214,262" fill="rgb(230, 195, 74)"/>
+
+    <!-- Декоративная руническая гравировка на теле наковальни -->
+    <path d="M 234 324 L 256 308 L 278 324 L 256 340 Z" 
+          fill="none" stroke="rgb(230, 195, 74)" stroke-width="2"/>
+    <line x1="256" y1="308" x2="256" y2="340" stroke="rgb(230, 195, 74)" stroke-width="1.5"/>
+  </g>
+
+  <!-- Кузнечный молот (занесенный под углом над наковальней) -->
+  <g id="hammer" transform="rotate(-32 280 210)" filter="url(#goldGlow)">
+    <!-- Рукоять молота с оплеткой -->
+    <rect x="274" y="50" width="14" height="175" rx="4" fill="url(#goldLinear)"/>
+    <!-- Рельефные кольца хвата -->
+    <line x1="272" y1="170" x2="290" y2="170" stroke="rgb(230, 195, 74)" stroke-width="2.5"/>
+    <line x1="272" y1="184" x2="290" y2="184" stroke="rgb(230, 195, 74)" stroke-width="2.5"/>
+    <line x1="272" y1="198" x2="290" y2="198" stroke="rgb(230, 195, 74)" stroke-width="2.5"/>
+    <!-- Навершие рукояти -->
+    <polygon points="281,42 291,52 271,52" fill="rgb(230, 195, 74)"/>
+
+    <!-- Боёк/голова молота с фасками -->
+    <path d="M 240 206 
+             L 322 206 
+             L 332 216 
+             L 332 250 
+             L 322 260 
+             L 240 260 
+             L 230 250 
+             L 230 216 Z" 
+          fill="url(#goldLightGrad)" stroke="rgb(139, 115, 85)" stroke-width="2.5"/>
+
+    <!-- Ударные бойки по бокам -->
+    <rect x="222" y="218" width="8" height="30" rx="1.5" fill="rgb(139, 115, 85)"/>
+    <rect x="332" y="218" width="8" height="30" rx="1.5" fill="rgb(139, 115, 85)"/>
+
+    <!-- Рунический инкрустированный кристалл в центре молота -->
+    <polygon points="281,220 293,233 281,246 269,233" 
+             fill="rgb(230, 195, 74)" stroke="rgb(139, 115, 85)" stroke-width="1.5"/>
+  </g>
+
+  <!-- Вспышка и магические искры от ковки -->
+  <!-- Центр удара над рогом/зеркалом -->
+  <g id="sparks">
+    <circle cx="236" cy="242" r="14" fill="url(#sparkBurst)"/>
+
+    <!-- Крупные четырехконечные фэнтези-искры -->
+    <!-- Искра 1 (вверх-влево) -->
+    <path d="M 194 204 Q 194 218 180 218 Q 194 218 194 232 Q 194 218 208 218 Q 194 218 194 204 Z" 
+          fill="rgb(230, 195, 74)"/>
+    <!-- Искра 2 (вверх) -->
+    <path d="M 232 170 Q 232 180 222 180 Q 232 180 232 190 Q 232 180 242 180 Q 232 180 232 170 Z" 
+          fill="rgb(230, 195, 74)"/>
+    <!-- Искра 3 (вправо) -->
+    <path d="M 296 232 Q 296 240 288 240 Q 296 240 296 248 Q 296 240 304 240 Q 296 240 296 232 Z" 
+          fill="rgb(212, 175, 55)"/>
+    <!-- Искра 4 (малая) -->
+    <path d="M 166 250 Q 166 255 161 255 Q 166 255 166 260 Q 166 255 171 255 Q 166 255 166 250 Z" 
+          fill="rgb(230, 195, 74)"/>
+
+    <!-- Точечные мерцающие крупицы золота -->
+    <circle cx="214" cy="195" r="2.5" fill="rgb(230, 195, 74)"/>
+    <circle cx="178" cy="238" r="2" fill="rgb(212, 175, 55)"/>
+    <circle cx="270" cy="188" r="3" fill="rgb(230, 195, 74)"/>
+    <circle cx="314" cy="214" r="2" fill="rgb(212, 175, 55)"/>
+    <circle cx="248" cy="226" r="2.5" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Индикатор многоточия «В процессе...» в виде фэнтезийных рунических камней -->
+  <g id="underConstructionDots" transform="translate(0, 30)">
+    <!-- Левая точка -->
+    <polygon points="216,400 224,408 216,416 208,408" 
+             fill="url(#goldLightGrad)" stroke="rgb(139, 115, 85)" stroke-width="1.5"/>
+    <!-- Центральная точка (чуть крупнее) -->
+    <polygon points="256,397 266,408 256,419 246,408" 
+             fill="rgb(230, 195, 74)" stroke="rgb(139, 115, 85)" stroke-width="1.5"/>
+    <!-- Правая точка -->
+    <polygon points="296,400 304,408 296,416 288,408" 
+             fill="url(#goldLightGrad)" stroke="rgb(139, 115, 85)" stroke-width="1.5"/>
+  </g>
+</svg>

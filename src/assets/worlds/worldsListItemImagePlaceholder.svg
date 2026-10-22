@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="100%" height="100%">
+  <defs>
+    <!-- Цветовые градиенты палитры -->
+    <linearGradient id="goldLinear" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgb(230, 195, 74)"/>
+      <stop offset="50%" stop-color="rgb(212, 175, 55)"/>
+      <stop offset="100%" stop-color="rgb(139, 115, 85)"/>
+    </linearGradient>
+
+    <linearGradient id="goldLightGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="rgb(212, 175, 55)"/>
+      <stop offset="100%" stop-color="rgb(230, 195, 74)"/>
+    </linearGradient>
+
+    <linearGradient id="goldDarkGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="rgb(212, 175, 55)"/>
+      <stop offset="100%" stop-color="rgb(139, 115, 85)"/>
+    </linearGradient>
+
+    <!-- Фон с глубокой виньеткой и теплым свечением в центре -->
+    <radialGradient id="bgVignette" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="rgb(26, 24, 21)"/>
+      <stop offset="55%" stop-color="rgb(15, 14, 13)"/>
+      <stop offset="100%" stop-color="rgb(8, 8, 7)"/>
+    </radialGradient>
+
+    <radialGradient id="coreGlow" cx="50%" cy="42%" r="48%">
+      <stop offset="0%" stop-color="rgb(230, 195, 74)" stop-opacity="0.25"/>
+      <stop offset="45%" stop-color="rgb(212, 175, 55)" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="rgb(139, 115, 85)" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="orbGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="25%" stop-color="rgb(230, 195, 74)"/>
+      <stop offset="70%" stop-color="rgb(212, 175, 55)"/>
+      <stop offset="100%" stop-color="rgb(139, 115, 85)"/>
+    </radialGradient>
+
+    <!-- Мягкое свечение контуров -->
+    <filter id="fantasyGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Левая половина симметричной книги и летящих элементов -->
+    <g id="bookHalf">
+      <!-- Нижний переплет (обложка) -->
+      <path d="M 480 435 C 440 433 370 428 305 444 L 305 432 C 370 416 440 421 480 423 Z"
+            fill="url(#goldDarkGrad)" stroke="rgb(139, 115, 85)" stroke-width="1.5"/>
+
+      <!-- Блок страниц (бумажный срез) -->
+      <path d="M 480 423 C 440 421 370 416 312 430 L 312 422 C 370 408 440 413 480 415 Z"
+            fill="rgb(139, 115, 85)" opacity="0.8"/>
+      <path d="M 480 415 C 440 413 370 408 318 420 L 318 412 C 370 400 440 405 480 407 Z"
+            fill="url(#goldLinear)" opacity="0.9"/>
+
+      <!-- Верхний раскрытый лист -->
+      <path d="M 480 402 C 445 398 385 385 325 396 C 322 360 326 352 332 344 C 390 335 445 348 480 358 Z"
+            fill="rgb(18, 17, 16)" stroke="url(#goldLightGrad)" stroke-width="2"/>
+
+      <!-- Внутренняя золотая рамка на странице -->
+      <path d="M 470 392 C 442 388 392 376 342 386 C 340 364 342 358 346 354 C 392 346 440 356 470 364 Z"
+            fill="none" stroke="rgb(139, 115, 85)" stroke-width="1.2" stroke-dasharray="4, 3"/>
+
+      <!-- Рунические строки на странице -->
+      <path d="M 360 365 C 395 358 430 366 455 372" fill="none" stroke="rgb(212, 175, 55)" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M 356 373 C 390 366 425 374 455 380" fill="none" stroke="rgb(212, 175, 55)" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M 362 381 C 395 374 425 382 450 388" fill="none" stroke="rgb(139, 115, 85)" stroke-width="1.5" stroke-linecap="round"/>
+
+      <!-- Декоративный уголок страницы -->
+      <polygon points="334,354 344,352 336,362" fill="rgb(230, 195, 74)"/>
+
+      <!-- Эманация магических частиц из книги к сфере мира -->
+      <circle cx="395" cy="315" r="2" fill="rgb(230, 195, 74)"/>
+      <circle cx="360" cy="275" r="2.5" fill="rgb(212, 175, 55)"/>
+      <circle cx="420" cy="250" r="1.5" fill="rgb(230, 195, 74)"/>
+      <circle cx="325" cy="220" r="2" fill="rgb(139, 115, 85)"/>
+      <circle cx="435" cy="180" r="2" fill="rgb(230, 195, 74)"/>
+
+      <!-- Четырехлучевая звезда слева -->
+      <path d="M 310 185 Q 310 195 300 195 Q 310 195 310 205 Q 310 195 320 195 Q 310 195 310 185 Z"
+            fill="rgb(230, 195, 74)"/>
+      <path d="M 400 125 Q 400 132 393 132 Q 400 132 400 139 Q 400 132 407 132 Q 400 132 400 125 Z"
+            fill="rgb(212, 175, 55)"/>
+    </g>
+
+    <!-- Левая половина внешнего обрамления (уменьшенные боковые отступы) -->
+    <g id="borderHalf">
+      <!-- Угловая виньетка (верх-лево) -->
+      <g transform="translate(16, 20)" stroke="url(#goldLightGrad)" stroke-width="1.5" fill="none">
+        <path d="M 0 36 L 0 0 L 36 0"/>
+        <path d="M 8 26 L 8 8 L 26 8"/>
+        <circle cx="16" cy="16" r="2.5" fill="rgb(230, 195, 74)"/>
+      </g>
+      <!-- Угловая виньетка (низ-лево) -->
+      <g transform="translate(16, 520) scale(1, -1)" stroke="url(#goldLightGrad)" stroke-width="1.5" fill="none">
+        <path d="M 0 36 L 0 0 L 36 0"/>
+        <path d="M 8 26 L 8 8 L 26 8"/>
+        <circle cx="16" cy="16" r="2.5" fill="rgb(230, 195, 74)"/>
+      </g>
+      <!-- Левый осевой ромб (придвинут к краю) -->
+      <polygon points="6,270 16,264 26,270 16,276" fill="url(#goldLightGrad)"/>
+    </g>
+  </defs>
+
+  <!-- Заливка фона -->
+  <rect width="960" height="540" fill="transparent"/>
+  <rect width="960" height="540" fill="url(#coreGlow)"/>
+
+  <!-- Верхний и нижний осевые ромбы (строго по центру x=480, ближе к краям) -->
+  <polygon points="480,16 486,26 480,36 474,26" fill="url(#goldLightGrad)"/>
+  <polygon points="480,504 486,514 480,524 474,514" fill="url(#goldLightGrad)"/>
+
+  <!-- Боковые орнаменты рамки через зеркалирование -->
+  <use href="#borderHalf"/>
+  <use href="#borderHalf" transform="translate(960, 0) scale(-1, 1)"/>
+
+  <!-- ========================================== -->
+  <!-- ЦЕНТРАЛЬНАЯ АБСТРАКЦИЯ МИРА (СФЕРА / АРМИЛЛА) -->
+  <!-- Все круги и эллипсы строго соосны по x=480 -->
+  <!-- ========================================== -->
+  <g id="worldAbstraction" filter="url(#fantasyGlow)">
+    <!-- Внешний ореол астрономической сферы -->
+    <circle cx="480" cy="205" r="145" fill="none" stroke="rgb(139, 115, 85)" stroke-width="1" stroke-dasharray="4, 8" opacity="0.5"/>
+    <circle cx="480" cy="205" r="130" fill="none" stroke="url(#goldLinear)" stroke-width="1.5" opacity="0.8"/>
+    <circle cx="480" cy="205" r="118" fill="none" stroke="rgb(139, 115, 85)" stroke-width="1" stroke-dasharray="2, 6"/>
+
+    <!-- Наклонные кольца армиллярной сферы (взаимно зеркальные углы 30° и -30°) -->
+    <ellipse cx="480" cy="205" rx="108" ry="32" fill="none" stroke="url(#goldLinear)" stroke-width="2" transform="rotate(-30 480 205)"/>
+    <ellipse cx="480" cy="205" rx="108" ry="32" fill="none" stroke="url(#goldLinear)" stroke-width="2" transform="rotate(30 480 205)"/>
+
+    <!-- Главное экваториальное кольцо мира -->
+    <ellipse cx="480" cy="205" rx="108" ry="26" fill="none" stroke="rgb(230, 195, 74)" stroke-width="2.5"/>
+    <ellipse cx="480" cy="205" rx="96" ry="18" fill="none" stroke="rgb(139, 115, 85)" stroke-width="1" stroke-dasharray="6, 4"/>
+
+    <!-- Вертикальный меридиан -->
+    <ellipse cx="480" cy="205" rx="34" ry="92" fill="none" stroke="url(#goldLightGrad)" stroke-width="1.8"/>
+
+    <!-- Широтные параллели сферы мира -->
+    <ellipse cx="480" cy="175" rx="72" ry="16" fill="none" stroke="rgb(212, 175, 55)" stroke-width="1.2" opacity="0.7"/>
+    <ellipse cx="480" cy="235" rx="72" ry="16" fill="none" stroke="rgb(212, 175, 55)" stroke-width="1.2" opacity="0.7"/>
+
+    <!-- Центральное сияющее ядро мира -->
+    <circle cx="480" cy="205" r="32" fill="url(#orbGlow)"/>
+    <circle cx="480" cy="205" r="42" fill="none" stroke="rgb(230, 195, 74)" stroke-width="1.5" stroke-dasharray="3, 5"/>
+
+    <!-- Вертикальная ось мироздания (North-South Pole) -->
+    <line x1="480" y1="88" x2="480" y2="335" stroke="rgb(230, 195, 74)" stroke-width="2"/>
+    <circle cx="480" cy="205" r="4" fill="#FFFFFF"/>
+
+    <!-- Верхний полярный наконечник (Полярная Звезда / Кристалл) -->
+    <polygon points="480,72 486,85 480,98 474,85" fill="rgb(230, 195, 74)"/>
+    <polygon points="480,77 493,85 480,93 467,85" fill="rgb(230, 195, 74)"/>
+    <circle cx="480" cy="85" r="2.5" fill="#FFFFFF"/>
+
+    <!-- Симметричный серп луны, поддерживающий сферу снизу -->
+    <path d="M 425 240 C 440 270 520 270 535 240 C 515 284 445 284 425 240 Z"
+          fill="url(#goldLightGrad)" stroke="rgb(139, 115, 85)" stroke-width="1"/>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- РАСКРЫТАЯ КНИГА И СИММЕТРИЧНЫЕ ЭМАНАЦИИ    -->
+  <!-- ========================================== -->
+  <g id="bookFull">
+    <!-- Левая половина книги и искр -->
+    <use href="#bookHalf"/>
+
+    <!-- Правая половина книги (идеальное математическое отражение относительно оси x=480) -->
+    <use href="#bookHalf" transform="translate(960, 0) scale(-1, 1)"/>
+
+    <!-- Центральный корешок и лента-закладка (ляссе) строго по оси x=480 -->
+    <!-- Шов раскрытия страниц -->
+    <line x1="480" y1="358" x2="480" y2="405" stroke="rgb(139, 115, 85)" stroke-width="2.5"/>
+    <line x1="480" y1="405" x2="480" y2="435" stroke="rgb(230, 195, 74)" stroke-width="2"/>
+
+    <!-- Ниспадающая золотая лента закладки -->
+    <polygon points="475,358 485,358 485,455 480,447 475,455"
+             fill="url(#goldLightGrad)" stroke="rgb(139, 115, 85)" stroke-width="1.2"/>
+    <polygon points="478,358 482,358 482,448 480,444 478,448" fill="rgb(230, 195, 74)"/>
+
+    <!-- Центральный кристалл переплета в основании -->
+    <polygon points="480,427 485,434 480,441 475,434" fill="rgb(230, 195, 74)"/>
+  </g>
+
+  <!-- Световой восходящий конус знаний от книги к миру -->
+  <g opacity="0.35">
+    <polygon points="480,358 410,205 550,205" fill="url(#coreGlow)"/>
+    <line x1="480" y1="358" x2="440" y2="205" stroke="rgb(230, 195, 74)" stroke-width="1" stroke-dasharray="2, 4"/>
+    <line x1="480" y1="358" x2="520" y2="205" stroke="rgb(230, 195, 74)" stroke-width="1" stroke-dasharray="2, 4"/>
+  </g>
+</svg>
