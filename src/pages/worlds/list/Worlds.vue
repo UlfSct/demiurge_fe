@@ -2,7 +2,7 @@
 import type { WorldsListItem } from '@/stores/worlds'
 import ItemCard from '@/components/ui/blocks/ItemCard.vue'
 import IconButton from '@/components/ui/buttons/IconButton.vue'
-import ImagePlaceholder from '@/assets/worlds/worldsListItemImagePlaceholder.svg'
+import ImagePlaceholder from '@/assets/listItemImagePlaceholder.svg'
 import routerNames from '@/router/names.ts'
 import { useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify/framework'

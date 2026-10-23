@@ -28,5 +28,14 @@ export default defineConfigWithVueTs(
 
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 
+  {
+    name: 'app/conventions',
+    rules: {
+      // Имена компонентов заданы соглашением проекта: страница маршрута — Page.vue,
+      // доменный компонент — Worlds.vue / Workspaces.vue (см. RULES.md, раздел 3.1).
+      'vue/multi-word-component-names': 'off',
+    },
+  },
+
   skipFormatting,
 )

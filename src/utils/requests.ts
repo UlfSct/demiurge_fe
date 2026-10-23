@@ -104,10 +104,10 @@ export const sendRequest = async <T>(
     throw new Error(`Не удалось собрать URL`)
   }
 
-  let url = new URL(urlString)
+  const url = new URL(urlString)
   appendQueryParams(url, query)
 
-  let headers = urlEntry.isAuthNotRequired
+  const headers = urlEntry.isAuthNotRequired
     ? getDefaultHeaders(urlEntry.isFormData)
     : getDefaultAuthHeaders(urlEntry.isFormData)
 
@@ -181,15 +181,10 @@ export const sendRequest = async <T>(
 
 export const sendGetFileRequest = async (url: string) => {
   const headers: HeadersInit = getDefaultAuthHeaders(false)
-  let response: Response
-  try {
-    response = await fetch(url, {
-      method: 'GET',
-      headers,
-    })
-  } catch (e) {
-    throw e
-  }
+  const response = await fetch(url, {
+    method: 'GET',
+    headers,
+  })
   return await response.blob()
 }
 
@@ -226,4 +221,16 @@ export const blobToBase64 = (blob: Blob): Promise<string> => {
     reader.onerror = reject
     reader.readAsDataURL(blob)
   })
+}
+
+// Текст общей ошибки запроса (ключи `detail`/`_error`), если ошибка не разложена по полям.
+export const getRequestErrorText = (error: unknown, fallback: string = ''): string => {
+  if (!error || typeof error !== 'object') return fallback
+
+  const errorObject = error as RequestErrorObject
+  const value = errorObject.detail ?? errorObject._error
+
+  if (Array.isArray(value)) return value.join(' ')
+  if (typeof value === 'string' && value) return value
+  return fallback
 }

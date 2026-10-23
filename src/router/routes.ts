@@ -13,7 +13,8 @@ import WorldFactions from '@/pages/worlds/detail/factions/Page.vue'
 import WorldLocations from '@/pages/worlds/detail/locations/Page.vue'
 import WorldItems from '@/pages/worlds/detail/items/Page.vue'
 import CharactersList from '@/pages/characters/List.vue'
-import WorkspacesList from '@/pages/workspaces/List.vue'
+import WorkspacesList from '@/pages/workspaces/list/Page.vue'
+import WorkspacesDetail from '@/pages/workspaces/detail/Page.vue'
 import PartiesList from '@/pages/parties/List.vue'
 
 const worldsRoutes: RouteRecordRaw[] = [
@@ -72,6 +73,11 @@ const workspacesRoutes: RouteRecordRaw[] = [
     name: String(routerNames.WORKSPACES.LIST),
     path: '/workspaces',
     component: WorkspacesList,
+  },
+  {
+    name: String(routerNames.WORKSPACES.DETAIL),
+    path: '/workspaces/:id',
+    component: WorkspacesDetail,
   },
 ]
 

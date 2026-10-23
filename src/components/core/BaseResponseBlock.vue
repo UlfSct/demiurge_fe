@@ -6,16 +6,21 @@ import type { RequestParams, RequestQuery } from '@/types/requests.ts'
 export interface IBaseResponseStore<T> {
   getLoading: boolean
   getData: T | null
-  execute: (data: {}, params?: RequestParams, query?: RequestQuery) => Promise<void>
+  execute: (data: object, params?: RequestParams, query?: RequestQuery) => Promise<void>
   isErrorResponse: boolean
   isNotFoundResponse: boolean
 }
 
 interface IProps {
   store: IBaseResponseStore<Record<string, unknown>>
+  notFoundText?: string
+  errorText?: string
 }
 
-const props = defineProps<IProps>()
+const props = withDefaults(defineProps<IProps>(), {
+  notFoundText: 'Мир не существует или у вас нет прав для его просмотра',
+  errorText: 'Неизвестная ошибка загрузки данных',
+})
 </script>
 
 <template>
@@ -23,13 +28,9 @@ const props = defineProps<IProps>()
   <basic-text-block
     v-else-if="props.store.isNotFoundResponse"
     class="mt-2"
-    text="Мир не существует или у вас нет прав для его просмотра"
+    :text="props.notFoundText"
   />
-  <basic-text-block
-    v-else-if="props.store.isErrorResponse"
-    class="mt-2"
-    text="Неизвестная ошибка загрузки данных"
-  />
+  <basic-text-block v-else-if="props.store.isErrorResponse" class="mt-2" :text="props.errorText" />
   <template v-else-if="props.store.getData">
     <slot />
   </template>
