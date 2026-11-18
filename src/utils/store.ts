@@ -25,6 +25,12 @@ type BaseActionStore<TData extends object> = {
   execute: (data: TData, params?: RequestParams, query?: RequestQuery) => Promise<void>
 }
 
+/** Публичный вид action-стора Pinia: `getLoading` уже развёрнут из Ref. */
+export type ActionStore<TData extends object> = {
+  getLoading: boolean
+  execute: (data: TData, params?: RequestParams, query?: RequestQuery) => Promise<void>
+}
+
 export type BaseResponseStore<TData extends object> = {
   getLoading: Ref<boolean>
   getData: Ref<TData | null>

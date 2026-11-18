@@ -472,7 +472,40 @@ const apply = async () => {
   всё равно отбрасываются.
 - **Обязательно**: удаление файла — через сентинел `EMPTY_FILE_VALUE` (`'__clear__'`) в `FormData`,
   а не пустым `File`.
+- **Обязательно**: скачивание файлов — через `downloadFile` (`utils/files.ts`): fetch → Blob → object
+  URL + `<a download="...">`, потому что `/get/file/` не отдаёт `Content-Disposition` и браузер иначе
+  сохраняет файл без имени/расширения. Имя брать из `file.file.name` через `getSafeFileName`.
+- **Обязательно**: иконка файла — `getFileIconName(file.file.name)` по расширению (pdf, doc, xls, zip,
+  audio, video и т.д.), fallback — `insert_drive_file`.
 - **Обязательно**: multipart собирается в `prepareRequestData()` диалога.
+
+### 9.3 Статьи и Markdown
+
+- **Обязательно**: статьи любых сущностей (`worlds`, дальше `factions`, `items`, `locations`)
+  выводятся только через `components/core/MarkdownArticle.vue`; не рендерить Markdown вручную и не
+  вставлять `v-html` без `renderMarkdown`.
+- **Обязательно**: `renderMarkdown` (`utils/markdown.ts`) — markdown-it с `html: false`, `linkify`,
+  `typographer`, `breaks`; результат очищается DOMPurify (`ADD_ATTR: ['target']`), внешние ссылки
+  получают `target="_blank"` и `rel="noopener noreferrer"`. Статья — недоверенный контент, `html: true`
+  включать нельзя.
+- **Обязательно**: стили Markdown — scoped `:deep(...)` внутри `MarkdownArticle`, только токены темы
+  (`--color-text-gold`, `--gradient-panel`, `--shadow-gold-glow` и т.д.); глобальных стилей для
+  `v-html` не добавлять.
+- **Обязательно**: учитывать `article.is_visible`: скрытую статью показывать только автору/демиургу
+  (в остальных случаях — текст «Статья скрыта автором»).
+- **Обязательно**: создание статьи — `POST .../create/article/`, редактирование —
+  `PATCH .../update/article/`; UI использует общий `ArticleEditorDialog` с парой action-сторов
+  (`useWorldsArticle*Store`, `useLocationArticle*Store`, …). Если статья уже есть, вызывается только
+  update, иначе create создаст вторую и осиротит первую.
+- **Обязательно**: поля формы статьи — `title` (обязательно), `article_text` (обязательно, Markdown),
+  `is_visible` (чекбокс, по умолчанию `true`); ошибки раскладываются по полям через `useFormErrors`.
+- **Рекомендуется**: для новой сущности со статьёй добавить `article` в тип детали и просто передать
+  `article.title`/`article.article_text` в `MarkdownArticle`.
+- **Обязательно**: загрузка файлов сущности — общий `FileUploadDialog` с action-стором:
+  `POST .../add/file/` с `FormData` (поле `file`), по одному файлу за запрос; после успешной загрузки
+  деталь перезагружается, изображения попадают в галерею, остальные файлы — в список файлов.
+- **Обязательно**: удаление файлов/изображений — `FileList`/`ImageGallery` с `can-delete`, подтверждение
+  через `ApplyDialog` (например, `LocationFileDeleteDialog`) и `DELETE .../delete/file/{file_id}/`.
 
 ---
 
@@ -490,13 +523,39 @@ const apply = async () => {
 - **Обязательно**: серверный фильтр — отдельная карточка в слоте `#title` рядом с заголовком
   (`Workspaces` → «Все / Мои / Доступные для входа»), значение уходит в query-параметр стора.
 - **Обязательно**: поиск — только через `v-model:search` у `ListPageTemplate` (проброс в `ListHeader`,
-  поле активно при `searchable`). Пока API не поддерживает `search`, фильтрация клиентская: страница
-  при активном запросе грузит список одной страницей (`size = 500`), скрывает пагинацию
+  поле активно при `searchable`) и композабл `useClientListSearch` (`search`, `isSearching`,
+  `filteredItems`). Пока API не поддерживает `search`, фильтрация клиентская: страница при активном
+  запросе грузит список одной страницей (`size = 500`), скрывает пагинацию
   (`:show-pagination="!isSearching"`) и показывает `BasicTextBlock` при пустом результате. Как только
   на бэкенде появится `search`, фильтрация переводится на `setAdditionalQueryParam('search', ...)`,
   а клиентская удаляется.
 - **Обязательно**: номер страницы и размер приходят из `usePaginatedListData`, локальных дублей
   пагинации в странице нет.
+- **Обязательно**: детальная страница мира — обложка из `images[0].file.url`, метаданные (демиург,
+  авторы, публичность), `MarkdownArticle`, галерея остальных изображений, список файлов; кнопки
+  редактирования/удаления — по `is_author`/`is_demiurge`, после удаления — возврат к списку.
+- **Обязательно**: места мира — отдельный раздел в детали мира (`WorldLocationsSection`): грузить
+  `GET /user/location/?world=<id>&size=500`, строить дерево по `parent`, показывать иконку типа
+  (`getLocationIconName`), скрытые (`is_visible = false`) — только при `canEdit`. Поиск клиентский по
+  названию/описанию/типу, дерево сворачивается; при поиске — плоский список совпадений.
+- **Обязательно**: переход в место — `WORLDS.DETAIL.LOCATION_DETAIL`
+  (`/worlds/:id/locations/:locationId`); из карточки места переходы по `parent` и `children` идут тем
+  же маршрутом, `WorldsTitle` даёт крошки «Главная → Миры → Мир → место».
+- **Обязательно**: создание/правка места — общий `LocationFormDialog` (`POST /author/location/`,
+  `PATCH /author/location/{id}/`): поля `name`, `caption`, `location_type` (селектор типов),
+  `parent` (0 = «Без родителя») и `is_visible`; при правке из списка родителя исключаются само место и
+  его потомки, после успеха перезагружается раздел/деталь.
+- **Обязательно**: удаление места — `DELETE /author/location/{id}/` (`isEmptyResponse`), подтверждение
+  через `LocationDeleteDialog`; после удаления переход к родителю, иначе к миру.
+- **Обязательно**: статьи места — через общий `ArticleEditorDialog` с location-сторами
+  (`POST create/article` / `PATCH update/article`); кнопки только при `canEdit`.
+- **Обязательно**: файлы места — `FileUploadDialog` с location-стором; удаление файлов и изображений —
+  `FileList`/`ImageGallery` с `can-delete` и `LocationFileDeleteDialog`
+  (`DELETE /author/location/{id}/delete/file/{file_id}/`), после действия деталь перезагружается.
+- **Обязательно**: `canEdit` на детали места вычисляется по `GET /user/world/{id}/`
+  (`is_author || is_demiurge`), а не по локальным признакам места.
+- **Обязательно**: галерея и файлы на деталях — только через `ImageGallery` и `FileList`, чтобы
+  пропорции, имена при скачивании и иконки были одинаковыми на всех сущностях.
 - **Обязательно**: детальная страница — `BaseResponseBlock` над `createBaseResponseStore`, отдельная
   карточка с сущностью и отдельный блок участников. Управление показывается только при
   `my_role.value === 1`; владелец и текущий пользователь не редактируются и не удаляются.
@@ -520,6 +579,10 @@ const apply = async () => {
   не `#D4AF37`.
 - **Обязательно**: типографика — `--font-primary` (Georgia), размеры — `--font-size-*`,
   межбуквенные интервалы — `--letter-spacing-*`; не задавайте шрифты точечно в компонентах.
+- **Обязательно**: изображения сущностей — сохранять пропорции: `<img>` с `width/height: auto` и
+  `max-width`/`max-height` либо `object-fit: contain`; `cover`-обрезка допустима только для квадратных
+  аватаров. Для карточек — `ItemCard` (общая обёртка, не `cover`), для героя детали — обёртка с
+  `max-height` и центрированием.
 - **Обязательно**: готовые классы вместо переизобретения: `.default-card` (карточка с золотой рамкой),
   `.card-title` (+`--centered`, `--underlined`, `--no-margins`, `--small`), `.default-title`,
   `.form-btn`, `.form-input`, `.text--href`, `.color--red`.
@@ -619,12 +682,12 @@ const apply = async () => {
 | Место | Проблема | Как правильно |
 | --- | --- | --- |
 | `package.json`: `name: "vue-project"`, скрипты `oxlint vue-project`, `eslint vue-project` | Остатки шаблона Vite: линтеры получают несуществующий путь | `name` — по проекту; `oxlint src`, `eslint src` (или `.`) |
+| Удаление статьи | В UI нет удаления статьи, хотя эндпоинт `delete/article` есть | Добавить подтверждающий диалог; файлы и изображения мест удалять уже можно |
 | `stores/worlds/index.ts`: `useWorldsDemiurgeEditStore` с `storeId: 'worldsDelete'` | Два стора с одним id — состояние смешивается | Уникальный `storeId: 'worldsDemiurgeEdit'` |
 | `CheckBoxField.vue`: эмитит `change`, а формы слушают `@input` | Ошибка чекбокса не сбрасывается при изменении | Эмитить `input` (как остальные поля) или слушать `@change` |
-| `pages/worlds/list/Worlds.vue`, `detail/index/WorldDetail.vue`: `getItemImage()` | Всегда возвращает плейсхолдер, `item.images` игнорируется | Брать `item.images[0]?.file.url` с fallback на плейсхолдер |
 | `styles/index.scss` | Класс `no-auth-bg` используется на 3 экранах, но не определён | Либо определить фон, либо убрать класс |
-| `utils/cookie.ts`, `types/cookie.ts`, `stores/worlds/{factions,items,locations}.ts` | Мёртвый код без импортов | Удалить или подключить осознанно |
-| `pages/worlds/detail/{authors,files,images,factions,items,locations}/Page.vue` | Пустые компоненты вместо заглушек | `UnderConstruction` до реализации |
+| `utils/cookie.ts`, `types/cookie.ts`, `stores/worlds/{factions,items}.ts` | Мёртвый код без импортов | Удалить или подключить осознанно |
+| `pages/worlds/detail/{authors,files,images,factions,items}/Page.vue`, полный список `locations/Page.vue` | Пустые компоненты вместо заглушек; раздел мест и карточка места уже работают | `UnderConstruction` или реализация по мере появления API |
 | Бэкенд рабочих пространств | `PATCH /workspace/admin/workspace/{id}/` для собственных пространств отдаёт `404` (`my_role=None` в `workspace_admin/workspace.py`), `/user/workspace/{id}/` принимает только `GET` | Правка вызывается по admin-URL при `my_role.value === 1`, ошибка показывается в диалоге. Если фильтр на бэкенде поменяют — фронт заработает без изменений |
 | Пароль пространства при правке | multipart не передаёт `null`, поэтому очистить пароль нельзя, только задать новый | Отдельный JSON-`PATCH` с `password: null`, если это понадобится |
 | `material-icons` в зависимостях + Google Fonts в `index.html` | Два способа подключения иконок | Оставить один (package или CDN) |

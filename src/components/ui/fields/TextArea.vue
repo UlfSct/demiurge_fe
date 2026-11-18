@@ -14,6 +14,7 @@ interface IProps {
   errorMessages?: string | string[] | null
   autocomplete?: string | undefined
   required?: boolean
+  rows?: number
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -24,6 +25,7 @@ const props = withDefaults(defineProps<IProps>(), {
   errorMessages: null,
   autocomplete: undefined,
   required: false,
+  rows: 3,
 })
 
 const modelValue = computed({
@@ -42,7 +44,7 @@ const modelValue = computed({
     :error="props.error"
     density="comfortable"
     variant="solo"
-    rows="3"
+    :rows="props.rows"
     no-resize
     :error-messages="props.errorMessages"
     @input="emit('input')"

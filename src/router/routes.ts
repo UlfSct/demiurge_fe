@@ -11,6 +11,7 @@ import WorldImages from '@/pages/worlds/detail/images/Page.vue'
 import WorldFiles from '@/pages/worlds/detail/files/Page.vue'
 import WorldFactions from '@/pages/worlds/detail/factions/Page.vue'
 import WorldLocations from '@/pages/worlds/detail/locations/Page.vue'
+import WorldLocationDetail from '@/pages/worlds/detail/locations/detail/Page.vue'
 import WorldItems from '@/pages/worlds/detail/items/Page.vue'
 import CharactersList from '@/pages/characters/List.vue'
 import WorkspacesList from '@/pages/workspaces/list/Page.vue'
@@ -52,6 +53,11 @@ const worldsRoutes: RouteRecordRaw[] = [
     name: String(routerNames.WORLDS.DETAIL.LOCATIONS),
     path: '/worlds/:id/locations',
     component: WorldLocations,
+  },
+  {
+    name: String(routerNames.WORLDS.DETAIL.LOCATION_DETAIL),
+    path: '/worlds/:id/locations/:locationId',
+    component: WorldLocationDetail,
   },
   {
     name: String(routerNames.WORLDS.DETAIL.ITEMS),

@@ -58,8 +58,8 @@ const getItemSubtitle = (item: WorldsListItem) => {
 }
 
 const getItemImage = (item: WorldsListItem): string => {
-  if (!item.images.length) return ImagePlaceholder
-  return ImagePlaceholder
+  const cover = item.images[0]
+  return cover ? cover.file.url : ImagePlaceholder
 }
 
 const goToDetail = (item: WorldsListItem) => {

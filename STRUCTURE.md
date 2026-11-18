@@ -75,12 +75,12 @@ demiurge_fe-main/
    ├─ App.vue                 Каркас: TopMenu, router-view, экран инициализации, редиректы
    ├─ assets/                 Изображения: логотип, фон, иконки, превью разделов, плейсхолдер
    ├─ components/
-   │  ├─ core/                Каркасные и диалоговые компоненты
+   │  ├─ core/                Каркасные и диалоговые компоненты, рендер Markdown-статей
    │  ├─ lists/               Шаблон списка: заголовок, панель поиска/создания, пагинация
    │  ├─ ui/                  Атомарные элементы: blocks/, buttons/, fields/
    │  ├─ worlds/              Компоненты, специфичные для миров
    │  └─ workspaces/          Компоненты рабочих пространств (заголовок с крошками)
-   ├─ composables/            Переиспользуемая логика (пагинация, ошибки форм)
+   ├─ composables/            Переиспользуемая логика (пагинация, поиск, ошибки форм)
    ├─ pages/                  Экран-уровень, по одному компоненту на маршрут
    ├─ plugins/vuetify.ts      Инициализация Vuetify: компоненты, директивы, иконки, тема
    ├─ router/                 Маршруты, имена, история, утилита генерации имён
@@ -88,7 +88,7 @@ demiurge_fe-main/
    ├─ styles/index.scss       Дизайн-токены, утилитарные классы, кастомный скроллбар
    ├─ types/                  Типы запросов, URL-дескрипторов, брендированные типы
    ├─ urls/                   Декларативное описание эндпоинтов API
-   └─ utils/                  fetch-обёртка, фабрики сторов, константы, даты, изображения
+   └─ utils/                  fetch-обёртка, фабрики сторов, константы, даты, изображения, файлы, Markdown
 ```
 
 ---
@@ -144,8 +144,8 @@ pages/
 │  ├─ Login.vue / Registration.vue / Profile.vue
 │  └─ modals/  ChangePasswordDialog, EditProfileDialog, EditProfileAvatarDialog
 ├─ worlds/
-│  ├─ list/    Page.vue (список + диалоги), Worlds.vue (сетка карточек), modals/ (Create/Edit/Delete)
-│  └─ detail/  index/ (Page.vue + WorldDetail.vue), authors|files|factions|images|items|locations/Page.vue
+│  ├─ list/    Page.vue (список + фильтр + поиск + диалоги), Worlds.vue (сетка карточек с обложками), modals/ (Create/Edit/Delete)
+│  └─ detail/  index/ (Page.vue + WorldDetail.vue: статья, места, галерея, файлы), locations/ (WorldLocationsSection, LocationDetail, detail/Page.vue, modals/ места), authors|files|factions|images|items/Page.vue
 ├─ characters/List.vue          «Раздел в разработке»
 ├─ workspaces/
 │  ├─ list/    Page.vue (список + фильтр + диалоги), Workspaces.vue (сетка карточек), modals/ (Create/Join/Leave)
@@ -163,16 +163,43 @@ pages/
 
 В списке рабочих пространств фильтр «Все / Мои / Доступные для входа» управляет query-параметром
 `my_workspaces` через `store.setAdditionalQueryParam` / `store.deleteAdditionalQueryParam`; параметр
-сбрасывает страницу на первую и перезагружает список.
+сбрасывает страницу на первую и перезагружает список. В списке миров — аналогичный фильтр
+«Все миры / Мои миры / Где я не автор» на параметре `my_world`.
 
-Поиск в рабочих пространствах клиентский: API не принимает `search`, поэтому при вводе запроса
-страница грузит список одной страницей (`size = 500`), фильтрует его по названию и владельцу и
-скрывает пагинацию (`:show-pagination="!isSearching"`). Поле живёт в `ListHeader` и управляется
-через `v-model:search` → `update:search`; `searchable` включает его, иначе поле остаётся readonly
-(так сейчас на странице миров).
+Поиск в списках клиентский: API не принимает `search`, поэтому при вводе запроса страница грузит
+список одной страницей (`size = 500`), фильтрует его и скрывает пагинацию
+(`:show-pagination="!isSearching"`). Логика вынесена в `composables/useClientListSearch.ts`; поле живёт
+в `ListHeader` и управляется через `v-model:search` → `update:search`, `searchable` включает его.
+Миры ищутся по названию, описанию и демиургу, пространства — по названию и владельцу.
 
-Страница детали (`pages/worlds/detail/index/Page.vue`) вычисляет `requestParams` из `route.params.id`
-и вызывает `store.execute({}, params)` в `onMounted`.
+Страница детали мира (`pages/worlds/detail/index/Page.vue`) вычисляет `requestParams` из
+`route.params.id`, вызывает `store.execute({}, params)` в `onMounted` и передаёт стор в
+`WorldDetail.vue`: обложка и метаданные (демиург, авторы, публичность), статья через
+`MarkdownArticle`, галерея изображений с просмотром, список файлов с иконками и кнопкой скачивания,
+кнопки редактирования и удаления для автора/демиурга. Изображения выводятся с сохранением пропорций
+(`<img>` + `max-width`/`max-height`, без `cover`-обрезки). `WorldDetail.vue` показывает статью, если
+она есть и (`is_visible` или пользователь — автор/демиург).
+
+Автор/демиург может добавить или отредактировать статью (`ArticleEditorDialog.vue` →
+`POST /author/world/{id}/create/article/` либо `PATCH .../update/article/`) и загрузить файлы
+(`FileUploadDialog.vue` → `POST /author/world/{id}/add/file/`, по одному файлу за запрос).
+После сохранения деталь перезагружается, поэтому статья и галерея/файлы обновляются сразу.
+
+Раздел «Места» (`WorldLocationsSection.vue`) грузит все места мира
+(`GET /user/location/?world=<id>&size=500`, `useWorldLocationsStore`) и строит дерево по `parent`.
+Поиск клиентский по названию/описанию/типу; в обычном режиме дерево можно сворачивать
+(`collapsedIds`), при поиске показывается плоский список совпадений. Скрытые места
+(`is_visible = false`) видны только автору/демиургу. Клик по месту открывает
+`pages/worlds/detail/locations/detail/Page.vue` (`/worlds/:id/locations/:locationId`), где
+`LocationDetail.vue` показывает тип, описание, родителя, вложенные места, статью, галерею и файлы;
+переходы по родителю/детям идут через тот же маршрут.
+
+Автор/демиург создаёт место из раздела «Добавить место» (`LocationFormDialog` → `POST /author/location/`),
+редактирует/удаляет его из карточки места (`PATCH`/`DELETE /author/location/{id}/`), создаёт подместо,
+добавляет статью (`ArticleEditorDialog` с location-сторами) и загружает/удаляет файлы и изображения
+(`FileUploadDialog`, `FileList`/`ImageGallery` с `can-delete`, `DELETE .../delete/file/{file_id}/`).
+Права берутся из `GET /user/world/{id}/` (`is_author`/`is_demiurge`), деталь места обновляется после
+каждого действия.
 
 Детальная страница пространства (`pages/workspaces/detail/Page.vue`) устроена так: `BaseResponseBlock`
 над `useWorkspacesDetailStore`, карточка с аватаром/владельцем/ролью, кнопка «Редактировать» при
@@ -194,11 +221,16 @@ pages/
 | | `LoadingBlock.vue` / `BasicTextBlock.vue` | Карточка «Идёт загрузка…» / произвольный текст в карточке |
 | | `UnderConstruction.vue` | Заглушка «Раздел находится в разработке» |
 | | `UserAvatar.vue` | Аватар с fallback-иконкой и слотом |
+| | `MarkdownArticle.vue` | Карточка статьи: заголовок + Markdown, отрендеренный через `renderMarkdown` (общий для всех сущностей) |
+| | `ArticleEditorDialog.vue` | Создание/правка статьи для любой сущности: принимает `createStore`/`editStore`/`params` |
+| | `FileUploadDialog.vue` | Загрузка файлов для любой сущности: принимает action-стор и `params` |
 | `lists/` | `ListPageTemplate.vue` | Каркас списка: слот заголовка, `ListHeader`, контент или лоадер, `PaginationFooter`; пробрасывает поиск и умеет скрывать пагинацию (`showPagination`) |
 | | `ListHeader.vue` | Поле поиска (`v-model:search`, активно при `searchable`) и кнопка «+» |
 | | `PageTitle.vue` / `WorldsTitle.vue` | Заголовок с кнопкой «Назад» / плюс хлебные крошки «Главная → Миры → Мир» |
 | | `PaginationFooter.vue` / `PaginationFooterPage.vue` | Номера страниц с многоточиями и выбор `size` |
-| `ui/` | `blocks/ItemCard.vue` | Карточка: изображение 16:9, заголовок, подзаголовок, слот кнопок |
+| `ui/` | `blocks/ItemCard.vue` | Карточка: изображение с сохранением пропорций (без cover-обрезки), заголовок, подзаголовок, слот кнопок |
+| | `blocks/ImageGallery.vue` | Галерея изображений с полноэкранным просмотром, пропорции сохраняются; при `can-delete` — удаление |
+| | `blocks/FileList.vue` | Карточка файлов: иконки по расширению, скачивание с именем/расширением, загрузка и удаление по правам |
 | | `buttons/IconButton.vue` | Квадратная иконочная кнопка в стиле `form-btn__icon` |
 | | `fields/TextField.vue` | `v-text-field` с обязательным `*`, ошибками и слотом `append-inner` |
 | | `fields/TextArea.vue` | Многострочное поле (`rows=3`, без ресайза) |
@@ -239,6 +271,24 @@ pages/
 | `useWorldsAuthorEditStore` | `createBaseActionStore` | `PATCH /author/world/{id}/` |
 | `useWorldsDeleteStore` | `createBaseActionStore` | `DELETE /demiurge/world/{id}/` |
 | `useWorldsDemiurgeEditStore` | `createBaseActionStore` | `PATCH /demiurge/world/{id}/` |
+| `useWorldsArticleCreateStore` | `createBaseActionStore<WorldsArticleRequestData>` | `POST /author/world/{id}/create/article/` |
+| `useWorldsArticleEditStore` | `createBaseActionStore<WorldsArticleRequestData>` | `PATCH /author/world/{id}/update/article/` |
+| `useWorldsFileCreateStore` | `createBaseActionStore<FormData>` | `POST /author/world/{id}/add/file/` (multipart) |
+
+Места мира — `stores/worlds/locations.ts`:
+
+| Стор | Фабрика | Эндпоинт |
+| --- | --- | --- |
+| `useWorldLocationsStore` | `createBaseResponseStore<PaginatedResponse<...>>` | `GET /user/location/` (`?world=<id>&size=500`) |
+| `useLocationDetailStore` | `createBaseResponseStore` | `GET /user/location/{id}/` |
+| `useLocationTypesStore` | `createBaseResponseStore<NumberSelectorItem[]>` | `GET /selectors/location/type/` |
+| `useLocationCreateStore` | `createBaseActionStore<LocationRequestData>` | `POST /author/location/` |
+| `useLocationEditStore` | `createBaseActionStore<LocationRequestData>` | `PATCH /author/location/{id}/` |
+| `useLocationDeleteStore` | `createBaseActionStore` | `DELETE /author/location/{id}/` |
+| `useLocationArticleCreateStore` | `createBaseActionStore<WorldsArticleRequestData>` | `POST /author/location/{id}/create/article/` |
+| `useLocationArticleEditStore` | `createBaseActionStore<WorldsArticleRequestData>` | `PATCH /author/location/{id}/update/article/` |
+| `useLocationFileCreateStore` | `createBaseActionStore<FormData>` | `POST /author/location/{id}/add/file/` |
+| `useLocationFileDeleteStore` | `createBaseActionStore` | `DELETE /author/location/{id}/delete/file/{file_id}/` |
 
 **`stores/workspaces/index.ts`** — типы домена (`WorkspaceListItem`, `WorkspaceJoinRequestData`)
 и сторы рабочих пространств:
@@ -267,8 +317,9 @@ pages/
 - **base action** — `getLoading/execute`; ошибки пробрасываются наверх, чтобы диалог разложил их
   по полям формы.
 
-`stores/worlds/{factions,items,locations}.ts` описывают типы и сторы для вложенных сущностей мира
-(фракции, предметы, локации) — сейчас нигде не импортируются.
+`stores/worlds/{factions,items}.ts` описывают типы и сторы для вложенных сущностей мира
+(фракции, предметы) — сейчас нигде не импортируются; `stores/worlds/locations.ts` используется
+разделом мест.
 
 ### 4.6 Композаблы (`src/composables`)
 
@@ -278,6 +329,9 @@ pages/
   `watch` с `immediate: true` перезагружает данные при изменении параметров, страницы или размера
   страницы; сеттеры параметров сбрасывают страницу на первую (`withPageReset`); `reloadList(true)`
   умеет откатиться на предыдущую страницу после удаления последнего элемента.
+- **`useClientListSearch<T>(store, items, getSearchText)`** — клиентский поиск по списку: `search`,
+  `isSearching`, `filteredItems`; при вводе запроса переключает размер страницы на 500, при очистке
+  возвращает прежний и восстанавливает его в `onBeforeUnmount` (стор живёт дольше страницы).
 - **`useFormErrors()`** — словарь ошибок `RequestErrorObject`: `getError/getErrors/setError/setErrors/
   clearError/clearErrors/hasError/hasErrors`. Ошибки бэкенда раскладываются прямо по именам полей.
 
@@ -294,6 +348,8 @@ pages/
 (профиль, смена пароля), `WORLDS` (миры, статьи, файлы, фракции/предметы/локации, правки автора и
 демиурга), `WORKSPACES` (список, деталь, создание, редактирование, вход/выход, участники),
 `SELECTORS` (справочники пользователей, типов локаций/предметов, ролей).
+Фильтры списков: миры — `my_world`, пространства — `my_workspaces`, места — `world` (и серверный
+`name`, если понадобится серверный поиск).
 Часть путей генерируется фабриками внутри `urls/worlds.ts`
 (`getWorldChildrenUrls`, `getWorldBaseArticleUrls`, `getWorldBaseFileUrls`).
 
@@ -348,13 +404,14 @@ pages/
 | `/login` | `LOGIN` | `pages/user/Login.vue` | Готово |
 | `/registration` | `REGISTRATION` | `pages/user/Registration.vue` | Готово |
 | `/profile` | `PROFILE` | `pages/user/Profile.vue` | Готово |
-| `/worlds` | `WORLDS.LIST` | `pages/worlds/list/Page.vue` | Готово (список, создание, правка, удаление) |
-| `/worlds/:id` | `WORLDS.DETAIL.INDEX` | `pages/worlds/detail/index/Page.vue` | Готово (карточка мира) |
+| `/worlds` | `WORLDS.LIST` | `pages/worlds/list/Page.vue` | Готово (обложки, фильтр, поиск, создание, правка, удаление) |
+| `/worlds/:id` | `WORLDS.DETAIL.INDEX` | `pages/worlds/detail/index/Page.vue` | Готово (статья Markdown, галерея, файлы, правка/удаление) |
 | `/worlds/:id/authors` | `WORLDS.DETAIL.AUTHORS` | `.../authors/Page.vue` | Пустой компонент (заглушка) |
 | `/worlds/:id/images` | `WORLDS.DETAIL.IMAGES` | `.../images/Page.vue` | Пустой компонент |
 | `/worlds/:id/files` | `WORLDS.DETAIL.FILES` | `.../files/Page.vue` | Пустой компонент |
 | `/worlds/:id/factions` | `WORLDS.DETAIL.FACTIONS` | `.../factions/Page.vue` | Пустой компонент |
-| `/worlds/:id/locations` | `WORLDS.DETAIL.LOCATIONS` | `.../locations/Page.vue` | Пустой компонент |
+| `/worlds/:id/locations` | `WORLDS.DETAIL.LOCATIONS` | `.../locations/Page.vue` | Пустой компонент (полный список пока не нужен: раздел есть в детали мира) |
+| `/worlds/:id/locations/:locationId` | `WORLDS.DETAIL.LOCATION_DETAIL` | `.../locations/detail/Page.vue` | Готово (карточка места, родитель, дети, статья, галерея, файлы) |
 | `/worlds/:id/items` | `WORLDS.DETAIL.ITEMS` | `.../items/Page.vue` | Пустой компонент |
 | `/characters` | `CHARACTERS.LIST` | `pages/characters/List.vue` | «В разработке» |
 | `/workspaces` | `WORKSPACES.LIST` | `pages/workspaces/list/Page.vue` | Готово (список, фильтр, поиск, создание, вход/выход) |
@@ -443,12 +500,21 @@ utils/requests.ts  ──►  urls/<домен>.ts (path + метод + флаг
 
 Разделы/модули, которые уже заведены, но ещё не доделаны или не подключены:
 
-- **Заглушки**: `characters` и `parties` показывают `UnderConstruction`; все подстраницы
-  мира, кроме `index` (authors/images/files/factions/locations/items), — пустые компоненты.
-- **Изображения миров не используются**: `getItemImage()` в `Worlds.vue` и `WorldDetail.vue` всегда
-  возвращает плейсхолдер, игнорируя `item.images`.
+- **Заглушки**: `characters` и `parties` показывают `UnderConstruction`; у мира заглушками остались
+  `authors`, `images`, `files`, `factions`, `items`, а также полный список `/worlds/:id/locations`
+  (раздел мест и карточка места уже работают).
+- **Статьи**: детальная страница мира/места рендерит `article.article_text` через `MarkdownArticle`
+  (markdown-it + DOMPurify, общий компонент для будущих сущностей). Автор/демиург может создать
+  или отредактировать статью в общем `ArticleEditorDialog` (`POST create/article` / `PATCH update/article`)
+  для мира и места; удаления статьи через UI пока нет. Если статье выставлен `is_visible = false`, она
+  показывается только автору/демиургу.
+- **Файлы**: автор/демиург загружает файлы в общем `FileUploadDialog` (по одному файлу за запрос,
+  `POST add/file/`), после загрузки деталь перезагружается. Скачивание — через `downloadFile`
+  (Blob + `download`), иначе `/get/file/` отдаёт файл без имени и расширения; в списке показываются
+  иконки по расширению (`utils/files.ts`). Для мест файлы и изображения можно удалять
+  (`FileList`/`ImageGallery` + `LocationFileDeleteDialog`); для мира удаление файлов в UI пока нет.
 - **Неиспользуемые модули**: `utils/cookie.ts` + `types/cookie.ts`, `stores/worlds/factions.ts`,
-  `stores/worlds/items.ts`, `stores/worlds/locations.ts` (сторы даже не экспортируются).
+  `stores/worlds/items.ts`.
 - **Дублирование `storeId`**: `useWorldsDemiurgeEditStore` создаётся с `storeId: 'worldsDelete'`,
   что конфликтует с `useWorldsDeleteStore` в одном Pinia-инстансе.
 - **Рабочие пространства**: детальная страница, правка и управление участниками реализованы.
@@ -470,7 +536,7 @@ utils/requests.ts  ──►  urls/<домен>.ts (path + метод + флаг
 - **Нет `.env.example`** и валидации `VITE_API_URL`; локальный `.env` с `http://localhost:8000`
   создан, но в репозиторий не попадает (`.env` в `.gitignore`).
 - **API не поддерживает поиск**: у `/user/workspace/` (и `/user/world/`) нет параметра `search`,
-  поэтому поиск рабочих пространств фильтрует уже загруженные данные на клиенте: при активном запросе
-  список грузится целиком (до 500 записей), пагинация скрывается. Когда на бэкенде появится `search`,
-  фильтрацию нужно перевести на `setAdditionalQueryParam('search', ...)`, а клиентскую логику удалить.
-  На странице миров поиск пока не включён (`searchable` не передаётся).
+  поэтому поиск в списках клиентский: при активном запросе список грузится целиком (до 500 записей),
+  пагинация скрывается. Логика — `composables/useClientListSearch.ts`. Когда на бэкенде появится
+  `search`, фильтрацию нужно перевести на `setAdditionalQueryParam('search', ...)`, а клиентскую
+  логику удалить.

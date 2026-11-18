@@ -22,6 +22,7 @@ const getWorldBaseFileUrls = (base: string) => {
     CREATE: {
       path: `/${base}/{id}/add/file/`,
       method: HTTP_METHODS.POST,
+      isFormData: true,
     },
     DELETE: {
       path: `/${base}/{id}/delete/file/{file_id}/`,
@@ -51,6 +52,7 @@ const getWorldChildrenUrls = (base: string) => {
     DELETE: {
       path: `/author/${base}/{id}/`,
       method: HTTP_METHODS.DELETE,
+      isEmptyResponse: true,
     },
     FILES: getWorldBaseFileUrls(`author/${base}`),
     ARTICLE: getWorldBaseArticleUrls(`author/${base}`),

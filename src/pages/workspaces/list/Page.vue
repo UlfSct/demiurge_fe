@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import BasicTextBlock from '@/components/core/BasicTextBlock.vue'
 import ListPageTemplate from '@/components/lists/ListPageTemplate.vue'
 import WorkspacesTitle from '@/components/workspaces/WorkspacesTitle.vue'
+import { useClientListSearch } from '@/composables/useClientListSearch.ts'
 import Workspaces from '@/pages/workspaces/list/Workspaces.vue'
 import WorkspaceCreateDialog from '@/pages/workspaces/list/modals/WorkspaceCreateDialog.vue'
 import WorkspaceJoinDialog from '@/pages/workspaces/list/modals/WorkspaceJoinDialog.vue'
 import WorkspaceLeaveDialog from '@/pages/workspaces/list/modals/WorkspaceLeaveDialog.vue'
 import routerNames from '@/router/names.ts'
 import { useWorkspacesListStore, type WorkspaceListItem } from '@/stores/workspaces'
-import { ITEMS_PER_PAGE_SELECTOR_ITEMS } from '@/utils/consts.ts'
 
 type WorkspaceListFilter = 'all' | 'my' | 'available'
 
@@ -21,55 +21,25 @@ const FILTER_ITEMS: { title: string; value: WorkspaceListFilter }[] = [
   { title: 'Доступные для входа', value: 'available' },
 ]
 
-// API не умеет искать по названию, поэтому на время поиска грузим весь список одной страницей.
-const SEARCH_ITEMS_PER_PAGE = 500
-
 const router = useRouter()
 const store = useWorkspacesListStore()
 const { getItems, getLoading } = storeToRefs(store)
 
-const search = ref<string>('')
-const savedItemsPerPage = ref<number | null>(null)
+const { search, isSearching, filteredItems } = useClientListSearch(
+  store,
+  getItems,
+  (item) => `${item.name} ${item.owner ?? ''}`,
+)
+
 const filter = ref<WorkspaceListFilter>('all')
 const createDialogOpened = ref<boolean>(false)
 const joinDialogOpened = ref<boolean>(false)
 const leaveDialogOpened = ref<boolean>(false)
 const selectedItem = ref<WorkspaceListItem | null>(null)
 
-const isSearching = computed(() => search.value.trim().length > 0)
-
-const filteredItems = computed(() => {
-  const query = search.value.trim().toLowerCase()
-  if (!query) return getItems.value
-
-  return getItems.value.filter((item) => {
-    const name = item.name.toLowerCase()
-    const owner = item.owner ? item.owner.toLowerCase() : ''
-    return name.includes(query) || owner.includes(query)
-  })
-})
-
-watch(isSearching, (value) => {
-  if (value) {
-    savedItemsPerPage.value = store.getItemsPerPage
-    store.setPage(1)
-    store.setItemsPerPage(SEARCH_ITEMS_PER_PAGE)
-    return
-  }
-
-  const itemsPerPage = savedItemsPerPage.value ?? Number(ITEMS_PER_PAGE_SELECTOR_ITEMS[0])
-  savedItemsPerPage.value = null
-  store.setPage(1)
-  store.setItemsPerPage(itemsPerPage)
-})
-
-// Стор живёт дольше страницы: возвращаем размер страницы и сбрасываем фильтр,
-// чтобы при следующем заходе состояние страницы совпадало с данными стора.
+// Стор живёт дольше страницы: сбрасываем фильтр, чтобы при следующем заходе
+// состояние страницы совпадало с данными стора.
 onBeforeUnmount(() => {
-  if (savedItemsPerPage.value !== null) {
-    store.setItemsPerPage(savedItemsPerPage.value)
-    savedItemsPerPage.value = null
-  }
   store.deleteAdditionalQueryParam('my_workspaces')
 })
 

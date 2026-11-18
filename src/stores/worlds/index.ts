@@ -74,3 +74,24 @@ export const useWorldsDemiurgeEditStore = createBaseActionStore({
   storeId: 'worldsDelete',
   url: urls.WORLDS.DETAIL.DEMIURGE.EDIT,
 })
+
+export type WorldsArticleRequestData = {
+  title: string
+  article_text: string
+  is_visible: boolean
+}
+
+export const useWorldsArticleCreateStore = createBaseActionStore<WorldsArticleRequestData>({
+  storeId: 'worldsArticleCreate',
+  url: urls.WORLDS.DETAIL.ARTICLE.CREATE,
+})
+
+export const useWorldsArticleEditStore = createBaseActionStore<WorldsArticleRequestData>({
+  storeId: 'worldsArticleEdit',
+  url: urls.WORLDS.DETAIL.ARTICLE.EDIT,
+})
+
+export const useWorldsFileCreateStore = createBaseActionStore<FormData>({
+  storeId: 'worldsFileCreate',
+  url: urls.WORLDS.DETAIL.FILES.CREATE,
+})
